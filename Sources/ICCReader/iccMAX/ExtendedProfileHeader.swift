@@ -410,6 +410,7 @@ public struct ExtendedProfileHeader {
         
         /// Microsoft Corporation ‘MSFT’ 4D534654h
         case microsoftCorporation = "MSFT"
+        case microsoftCorporation2 = "msft"
         
         /// Silicon Graphics, Inc. ‘SGI ’ 53474920h
         case siliconGraphics = "SGI "

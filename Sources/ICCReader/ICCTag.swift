@@ -111,8 +111,8 @@ public enum ICCTag {
     case brdfMToS3(_: tagStructType)
     case colorEncodingParams(_: tagStructType)
     case colorSpaceName(_: utf8Type)
-    case colorantInfo(_: tagArrayType)
-    case colorantInfoOut(_: tagArrayType)
+    case colorantInfo(_: tagArrayTypeOrLutType)
+    case colorantInfoOut(_: tagArrayTypeOrLutType)
     case customToStandardPcc(_: multiProcessElementsType)
     case cxf(_: utf8OrUtf8ZipType)
     case directionalAToB0(_: multiProcessElementsType)
@@ -197,7 +197,16 @@ public enum ICCTag {
                 signature == "sdin" ||
                 signature == "imnK" ||
                 signature == "imnM" ||
-                signature == "info" {
+                signature == "info" ||
+                signature == "K031" ||
+                signature == "K017" ||
+                signature == "K025" ||
+                signature == "K016" ||
+                signature == "K021" ||
+                signature == "K030" ||
+                signature == "K007" ||
+                signature == "K070" ||
+                signature == "K071" {
                 self = .unknown(signature: signature, data: try TagFactory(dataStream: &dataStream, size: size, header: header))
                 return
             }
@@ -1450,7 +1459,7 @@ public enum ICCTag {
             /// colorantInfoStructure elements. Each colorantInfoStructure entry provides a name for the colorant and optionally
             /// colorimetric or spectral information. See 12.2.2 for a complete description of contents and usage of a
             /// colorantInfoStructure.
-            self = .colorantInfo(try tagArrayType(dataStream: &dataStream, size: size))
+            self = .colorantInfo(try tagArrayTypeOrLutType(dataStream: &dataStream, size: size))
         case .colorantInfoOutTag:
             /// [ICC.2:2019] 9.2.53 colorantInfoOutTag
             /// Tag signature: ‘clio’ (636C696fh).
@@ -1461,7 +1470,7 @@ public enum ICCTag {
             /// colorantInfoStructure elements. Each colorantInfoStructure entry provides a name for the colorant and optionally
             /// colorimetric and/or spectral information. See 12.2.2 for a complete description of contents and usage of a colorantInfoStructure.
             /// This tag is used for DeviceLink profiles only.
-            self = .colorantInfo(try tagArrayType(dataStream: &dataStream, size: size))
+            self = .colorantInfo(try tagArrayTypeOrLutType(dataStream: &dataStream, size: size))
         case .customToStandardPccTag:
             /// [ICC.2:2019] 9.2.56 customToStandardPccTag
             /// Tag signature: 'c2sp' (63327370h).

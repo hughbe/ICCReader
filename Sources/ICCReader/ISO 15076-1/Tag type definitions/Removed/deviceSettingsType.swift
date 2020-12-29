@@ -34,7 +34,7 @@ public struct deviceSettingsType {
         
         /// 8..11 count value specifying number of platform entry structures uInt32Number
         self.count = try dataStream.read(endianess: .bigEndian)
-        guard 12 + self.count * 12 == size else {
+        guard 12 + self.count * 12 <= size else {
             throw ICCReadError.corrupted
         }
         
@@ -119,7 +119,8 @@ public struct deviceSettingsType {
             var settings: [Setting] = []
             settings.reserveCapacity(Int(self.count))
             for _ in 0..<self.count {
-                settings.append(try Setting(dataStream: &dataStream, platformSignature: platformSignature))
+                let remainingCount = self.size - UInt32(dataStream.position - startPosition)
+                settings.append(try Setting(dataStream: &dataStream, platformSignature: platformSignature, availableSize: remainingCount))
             }
             
             self.settings = settings
@@ -138,8 +139,12 @@ public struct deviceSettingsType {
         public let count: uInt32Number
         public let values: [SettingValue]
         
-        public init(dataStream: inout DataStream, platformSignature: KnownSignature<ExtendedProfileHeader.PlatformSignature>) throws {
+        public init(dataStream: inout DataStream, platformSignature: KnownSignature<ExtendedProfileHeader.PlatformSignature>, availableSize: UInt32) throws {
             let startPosition = dataStream.position
+            
+            guard availableSize >= 12 else {
+                throw ICCReadError.corrupted
+            }
             
             /// 0..3 setting ID signature see below
             self.signature = try Signature(dataStream: &dataStream)
@@ -149,6 +154,9 @@ public struct deviceSettingsType {
             
             /// 8..11 count value specifying number of setting values uInt32Number
             self.count = try dataStream.read(endianess: .bigEndian)
+            guard 12 + self.count * self.size <= availableSize else {
+                throw ICCReadError.corrupted
+            }
             
             var values: [SettingValue] = []
             values.reserveCapacity(Int(self.count))
@@ -158,7 +166,7 @@ public struct deviceSettingsType {
             
             self.values = values
             
-            guard dataStream.position - startPosition == self.size else {
+            guard dataStream.position - startPosition <= availableSize else {
                 throw ICCReadError.corrupted
             }
         }
@@ -177,7 +185,7 @@ public struct deviceSettingsType {
             }
             
             switch knownPlatformSignature {
-            case .microsoftCorporation:
+            case .microsoftCorporation, .microsoftCorporation2:
                 switch idSignature.rawValue {
                 case MSFTSettingSignature.resolution.rawValue:
                     guard size == 8 else {

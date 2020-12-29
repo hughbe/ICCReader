@@ -71,11 +71,7 @@ public struct textDescriptionType {
         
         /// 12..n-1 ASCII invariant description 7-bit ASCII
         if self.count > 0 {
-            self.desc = try dataStream.readString(count: Int(self.count) - 1, encoding: .ascii)!
-            let nullTerminator: UInt8 = try dataStream.read()
-            guard nullTerminator == 0x00 else {
-                throw ICCReadError.corrupted
-            }
+            self.desc = try dataStream.readAsciiString()!
         } else {
             self.desc = ""
         }
@@ -87,7 +83,22 @@ public struct textDescriptionType {
         self.ucCount = try dataStream.read(endianess: .bigEndian)
         if let size = size {
             guard 23 + Int(self.count) + Int(self.ucCount) * 2 <= size else {
-                throw ICCReadError.corrupted
+                // Seen invalid data.
+                let remainingCount = Int(size) - (dataStream.position - startPosition)
+                if remainingCount > 0 {
+                    guard dataStream.position + remainingCount <= dataStream.count else {
+                        throw ICCReadError.corrupted
+                    }
+                    
+                    dataStream.position += remainingCount
+                }
+                
+
+                self.ucDesc = "";
+                self.scCode = 0;
+                self.scCount = 0;
+                self.scDesc = "";
+                return;
             }
         }
 
@@ -115,11 +126,8 @@ public struct textDescriptionType {
         
         /// m+3..m+69 Localizable Macintosh description
         if self.scCount > 0 {
-            self.scDesc = try dataStream.readString(count: Int(self.scCount) - 1, encoding: .ascii)!
-            let nullTerminator: UInt8 = try dataStream.read(endianess: .bigEndian)
-            guard nullTerminator == 0x00 else {
-                throw ICCReadError.corrupted
-            }
+            self.scDesc = try dataStream.readString(count: Int(self.scCount), encoding: .ascii)!
+                .trimmingCharacters(in: ["\0"])
         } else {
             self.scDesc = ""
         }
