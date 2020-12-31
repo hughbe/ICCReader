@@ -27,7 +27,7 @@ import Foundation
 /// NOTE 1 This implies that the length of the file is a multiple of four.
 /// NOTE 2 The above restrictions result in two key benefits. First, the likelihood of two profiles which contain the same tag data, yet
 /// have different checksum values, is reduced. Second, all profiles are reduced to a minimum size.
-public struct ICCFile {
+public struct ICCColorProfile {
     public let header: ExtendedProfileHeader
     public let tags: [ICCTag]
     

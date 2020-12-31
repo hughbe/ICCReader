@@ -5,7 +5,7 @@ final class MetafileTests: XCTestCase {
     func testExample() throws {
         do {
             let data = try getData(name: "AdobeRGB1998", fileExtension: "icc")
-            let file = try ICCFile(data: data)
+            let file = try ICCColorProfile(data: data)
             print(file)
         }
     }

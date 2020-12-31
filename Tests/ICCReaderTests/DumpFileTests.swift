@@ -809,7 +809,7 @@ final class DumpFileTests: XCTestCase {
 #endif
         for (name, fileExtension) in files {
             let data = try getData(name: name, fileExtension: fileExtension)
-            let file = try ICCFile(data: data)
+            let file = try ICCColorProfile(data: data)
             for tag in file.tags {
                 if case .aToB0 = tag {
                     print("aToB0")
