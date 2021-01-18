@@ -5,6 +5,10 @@ final class DumpFileTests: XCTestCase {
     func testDumpICC() throws {
         var files: [(String, String)] = []
         
+        /* Extracted from PSD files */
+        files.append(("psd_1", "icc"))
+        files.append(("psd_2", "icc"))
+        
         /* https://github.com/bestbat/Windows-Server */
         files.append(("apl12600", "icm"))
         files.append(("can4200n", "icm"))
