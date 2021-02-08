@@ -11,7 +11,7 @@ import DataStream
 /// The measurementType information refers only to the internal profile data and is meant to provide profile makers an alternative to the
 /// default measurement specifications. When used the byte assignment and encoding shall be as given in Table 46.
 public struct measurementType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let standardObserver: StandardObserver
     public let backing: XYZNumber
@@ -27,8 +27,8 @@ public struct measurementType {
         }
         
         /// 0 to 3 4 ‘meas’ (6D656173h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .measurementType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.measurement else {
             throw ICCReadError.corrupted
         }
         

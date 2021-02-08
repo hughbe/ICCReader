@@ -813,86 +813,88 @@ final class DumpFileTests: XCTestCase {
 #endif
         for (name, fileExtension) in files {
             let data = try getData(name: name, fileExtension: fileExtension)
-            let file = try ICCColorProfile(data: data)
-            for tag in file.tags {
-                if case .aToB0 = tag {
+            let profile = try ICCColorProfile(data: data)
+            for tag in profile.tags {
+                if tag.signature == ICCTagSignature.aToB0 {
                     print("aToB0")
-                } else if case .aToB1 = tag {
+                } else if tag.signature == ICCTagSignature.aToB1 {
                     print("aToB1")
-                } else if case .aToB2 = tag {
+                } else if tag.signature == ICCTagSignature.aToB2 {
                     print("aToB2")
-                } else if case .aToB3 = tag {
+                } else if tag.signature == ICCTagSignature.aToB3 {
                     print("aToB3")
-                } else if case .bToA0 = tag {
+                } else if tag.signature == ICCTagSignature.bToA0 {
                     print("bToA0")
-                } else if case .bToA1 = tag {
+                } else if tag.signature == ICCTagSignature.bToA1 {
                     print("bToA1")
-                } else if case .bToA2 = tag {
+                } else if tag.signature == ICCTagSignature.bToA2 {
                     print("bToA2")
-                } else if case .bToA3 = tag {
+                } else if tag.signature == ICCTagSignature.bToA3 {
                     print("bToA3")
-                } else if case .bToD0 = tag {
+                } else if tag.signature == ICCTagSignature.bToD0 {
                     print("bToD0")
-                } else if case .bToD1 = tag {
+                } else if tag.signature == ICCTagSignature.bToD1 {
                     print("bToD1")
-                } else if case .bToD2 = tag {
+                } else if tag.signature == ICCTagSignature.bToD2 {
                     print("bToD2")
-                } else if case .bToD3 = tag {
+                } else if tag.signature == ICCTagSignature.bToD3 {
                     print("bToD3")
-                } else if case .dToB0 = tag {
+                } else if tag.signature == ICCTagSignature.dToB0 {
                     print("dToB0")
-                } else if case .dToB1 = tag {
+                } else if tag.signature == ICCTagSignature.dToB1 {
                     print("dToB1")
-                } else if case .dToB2 = tag {
+                } else if tag.signature == ICCTagSignature.dToB2 {
                     print("dToB2")
-                } else if case .dToB3 = tag {
+                } else if tag.signature == ICCTagSignature.dToB3 {
                     print("dToB3")
-                } else if case .gamut = tag {
+                } else if tag.signature == ICCTagSignature.gamut {
                     print("gamut")
-                } else if case .cied = tag {
+                } else if tag.signature == ICCTagSignature.cied {
                     print("cied")
-                } else if case let .unknown(signature: signature, data: _) = tag {
-                    print("unknown: \(signature)")
-                } else if case .redTRC = tag {
+                } else if tag.signature == ICCTagSignature.redTRC {
                     print("redTRC")
-                } else if case .greenTRC = tag {
+                } else if tag.signature == ICCTagSignature.greenTRC {
                     print("greenTRC")
-                } else if case .blueTRC = tag {
+                } else if tag.signature == ICCTagSignature.blueTRC {
                     print("blueTRC")
-                } else if case .charTarget = tag {
+                } else if tag.signature == ICCTagSignature.charTarget {
                     print("charTarget")
-                } else if case .devd = tag {
+                } else if tag.signature == ICCTagSignature.devd {
                     print("devd")
-                } else if case .gamutBoundaryDescription0 = tag {
+                } else if tag.signature == ICCTagSignature.gamutBoundaryDescription0 {
                     print("gamutBoundaryDescription0")
-                } else if case .gamutBoundaryDescription1 = tag {
+                } else if tag.signature == ICCTagSignature.gamutBoundaryDescription1 {
                     print("gamutBoundaryDescription1")
-                } else if case .gamutBoundaryDescription2 = tag {
+                } else if tag.signature == ICCTagSignature.gamutBoundaryDescription2 {
                     print("gamutBoundaryDescription2")
-                } else if case .gamutBoundaryDescription3 = tag {
+                } else if tag.signature == ICCTagSignature.gamutBoundaryDescription3 {
                     print("gamutBoundaryDescription3")
-                } else if case .customToStandardPcc = tag {
+                } else if tag.signature == ICCTagSignature.customToStandardPcc {
                     print("customToStandardPcc")
-                } else if case .standardToCustomPcc = tag {
+                } else if tag.signature == ICCTagSignature.standardToCustomPcc {
                     print("standardToCustomPcc")
-                } else if case .mToB0 = tag {
+                } else if tag.signature == ICCTagSignature.mToB0 {
                     print("mToB0")
-                } else if case .mToB1 = tag {
+                } else if tag.signature == ICCTagSignature.mToB1 {
                     print("mToB1")
-                } else if case .mToB2 = tag {
+                } else if tag.signature == ICCTagSignature.mToB2 {
                     print("mToB2")
-                } else if case .mToB3 = tag {
+                } else if tag.signature == ICCTagSignature.mToB3 {
                     print("mToB3")
-                } else if case .aToM0 = tag {
+                } else if tag.signature == ICCTagSignature.aToM0 {
                     print("aToM0")
-                } else if case .spectralViewingConditions = tag {
+                } else if tag.signature == ICCTagSignature.spectralViewingConditions {
                     print("spectralViewingConditions")
-                } else if case .cxf = tag {
+                } else if tag.signature == ICCTagSignature.cxf {
                     print("cxf")
                 } else {
                     print(tag)
                 }
             }
+            
+            print(profile.getTag(signature: "cprt") as Any)
+            print(profile.getTag(signature: ICCTagSignature.copyright) as Any)
+            print(profile.copyright as Any)
         }
     }
 

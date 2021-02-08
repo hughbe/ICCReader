@@ -25,7 +25,7 @@ import DataStream
 /// image-encoding format. The PNG format uses the pHYs chunk to specify the physical size of the image. The TIFF format uses the
 /// perResolutionUnit, XResolution and YResolution tags to specify the physical dimensions.
 public struct embeddedNormalImageType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let seamless: Bool
     public let encoding: ImageEncodingType
@@ -39,8 +39,8 @@ public struct embeddedNormalImageType {
         }
         
         /// 0 to 3 4 ‘enim’ (656e696dh) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .embeddedNormalImageType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.embeddedNormalImage else {
             throw ICCReadError.corrupted
         }
         

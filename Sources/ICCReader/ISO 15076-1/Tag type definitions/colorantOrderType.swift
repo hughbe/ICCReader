@@ -17,7 +17,7 @@ import DataStream
 /// to be laid down, the second position contains the number of the second colorant to be laid down, and so on, until all colorants are listed.
 /// When this tag is used, the “count of colorants” shall be in agreement with the data colour space signature of 7.2.6.
 public struct colorantOrderType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let count: uInt32Number
     public let values: [uInt8Number]
@@ -30,8 +30,8 @@ public struct colorantOrderType {
         }
         
         /// 0 to 3 4 ‘clro’ (636c726fh) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .colorantOrderType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.colorantOrder else {
             throw ICCReadError.corrupted
         }
         

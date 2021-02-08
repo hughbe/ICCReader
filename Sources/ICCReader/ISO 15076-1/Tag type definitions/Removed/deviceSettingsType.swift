@@ -11,7 +11,7 @@ import DataStream
 /// This type is an array of structures each of which contains platform-specific information about the settings of the device for which
 /// this profile is valid.
 public struct deviceSettingsType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let count: uInt32Number
     public let entries: [PlatformEntry]
@@ -24,8 +24,8 @@ public struct deviceSettingsType {
         }
         
         /// 0..3 ‘devs’ (64657673h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .deviceSettingsType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.deviceSettings else {
             throw ICCReadError.corrupted
         }
         
@@ -55,7 +55,7 @@ public struct deviceSettingsType {
     /// 12..end count platform entry structures see below
     /// Each platform entry structure has the following format:
     public struct PlatformEntry {
-        public let sig: KnownSignature<ExtendedProfileHeader.PlatformSignature>
+        public let sig: ICCSignature
         public let size: uInt32Number
         public let count: uInt32Number
         public let settingCombinations: [SettingCombination]
@@ -64,7 +64,7 @@ public struct deviceSettingsType {
             let startPosition = dataStream.position
             
             /// 0..3 platform ID signature (one of the Primary Platform signatures from Table 15)
-            self.sig = try KnownSignature(dataStream: &dataStream)
+            self.sig = try ICCSignature(dataStream: &dataStream)
             
             /// 4..7 size of this structure (including all of its substructures) in bytes uInt32Number
             self.size = try dataStream.read(endianess: .bigEndian)
@@ -100,7 +100,7 @@ public struct deviceSettingsType {
         public let count: uInt32Number
         public let settings: [Setting]
         
-        public init(dataStream: inout DataStream, platformSignature: KnownSignature<ExtendedProfileHeader.PlatformSignature>) throws {
+        public init(dataStream: inout DataStream, platformSignature: ICCSignature) throws {
             let startPosition = dataStream.position
             
             /// 0..3 size of this structure (including all of its substructures) in bytes uInt32Number
@@ -134,12 +134,12 @@ public struct deviceSettingsType {
     /// Each setting structure has the following format:
     /// 8..n count setting structures see below
     public struct Setting {
-        public let signature: Signature
+        public let signature: ICCSignature
         public let size: uInt32Number
         public let count: uInt32Number
         public let values: [SettingValue]
         
-        public init(dataStream: inout DataStream, platformSignature: KnownSignature<ExtendedProfileHeader.PlatformSignature>, availableSize: UInt32) throws {
+        public init(dataStream: inout DataStream, platformSignature: ICCSignature, availableSize: UInt32) throws {
             let startPosition = dataStream.position
             
             guard availableSize >= 12 else {
@@ -147,7 +147,7 @@ public struct deviceSettingsType {
             }
             
             /// 0..3 setting ID signature see below
-            self.signature = try Signature(dataStream: &dataStream)
+            self.signature = try ICCSignature(dataStream: &dataStream)
             
             /// 4..7 size (in bytes) per setting value uInt32Number
             self.size = try dataStream.read(endianess: .bigEndian)
@@ -178,14 +178,10 @@ public struct deviceSettingsType {
         case msftMediaType(_: MSFTMediaType)
         case msftHalftone(_: MSFTHalftone)
         
-        public init(dataStream: inout DataStream, platformSignature: KnownSignature<ExtendedProfileHeader.PlatformSignature>, idSignature: Signature, size: UInt32) throws {
-            guard case let .known(knownPlatformSignature) = platformSignature else {
-                self = .unknown(data: try dataStream.readBytes(count: Int(size)))
-                return
-            }
-            
-            switch knownPlatformSignature {
-            case .microsoftCorporation, .microsoftCorporation2:
+        public init(dataStream: inout DataStream, platformSignature: ICCSignature, idSignature: ICCSignature, size: UInt32) throws {
+            switch platformSignature {
+            case ExtendedProfileHeader.PlatformSignature.microsoftCorporation,
+                 ExtendedProfileHeader.PlatformSignature.microsoftCorporation2:
                 switch idSignature.rawValue {
                 case MSFTSettingSignature.resolution.rawValue:
                     guard size == 8 else {

@@ -17,7 +17,7 @@ import DataStream
 /// and the phosphor chromaticities in byte positions 12 to 35 shall match those listed in the appropriate row of Table 31.
 /// When the encoded value in byte position 10 and 11 is 0000h, the actual set of chromaticity values shall be described.
 public struct chromacityType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let numberOfDeviceChannels: UInt16
     public let phosphorOrColorantType: PhosphorOrColorantType
@@ -31,8 +31,8 @@ public struct chromacityType {
         }
         
         /// 0 to 3 4 ’chrm’ (6368726Dh) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .chromacityType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.chromacity else {
             throw ICCReadError.corrupted
         }
         

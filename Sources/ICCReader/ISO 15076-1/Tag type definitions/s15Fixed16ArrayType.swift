@@ -11,7 +11,7 @@ import DataStream
 /// This type represents an array of generic 4-byte (32-bit) fixed point quantity. The number of values is determined from the size of the tag.
 /// When used the byte assignment and encoding shall be as given in Table 73.
 public struct s15Fixed16ArrayType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let values: [s15Fixed16Number]
     
@@ -23,8 +23,8 @@ public struct s15Fixed16ArrayType {
         }
         
         /// 0 to 3 4 ‘sf32’ (73663332h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .s15Fixed16ArrayType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.s15Fixed16Array else {
             throw ICCReadError.corrupted
         }
         

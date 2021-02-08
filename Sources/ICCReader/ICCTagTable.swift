@@ -1,5 +1,5 @@
 //
-//  TagTable.swift
+//  ICCTagTable.swift
 //  
 //
 //  Created by Hugh Bellamy on 11/12/2020.
@@ -15,7 +15,7 @@ import DataStream
 /// Each 12-byte tag entry following the tag count shall consist of a 4-byte tag signature, a 4-byte offset to define the beginning of the
 /// tag data element, and a 4-byte entry identifying the length of the tag data element in bytes. Table 24 illustrates the structure for thi
 /// tag table. 7.3.2 to 7.3.5 specify the position and content of the entries composing the tag table.
-public struct TagTable {
+public struct ICCTagTable {
     public let count: UInt32
     public let tags: [Tag]
     
@@ -36,7 +36,7 @@ public struct TagTable {
     
     /// Individual Tag Structures Within Tag Table
     public struct Tag {
-        public let sig: KnownSignature<TagSignature>
+        public let sig: ICCSignature
         public let offset: UInt32
         public let size: UInt32
         
@@ -44,7 +44,7 @@ public struct TagTable {
             /// 4 to 7 4 Tag Signature
             /// Byte positions 4 to 7 (and repeating at 12-byte intervals) shall specify the signature of a tag listed in Clause 10, or
             /// of a private tag. Signatures of private tags shall be registered with the ICC as defined in Clause 5.
-            self.sig = try KnownSignature(dataStream: &dataStream)
+            self.sig = try ICCSignature(dataStream: &dataStream)
 
             /// 8 to 11 4 Offset to beginning of tag data element ulnt32Number
             /// 7.3.4 Offset to beginning of tag data element (byte position 8 to 11 and repeating)

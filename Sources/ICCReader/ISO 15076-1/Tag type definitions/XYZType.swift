@@ -12,9 +12,9 @@ import DataStream
 /// from the size of the tag. The byte stream is given below. Tristimulus values must be non-negative, the signed encoding allows for
 /// implementation optimizations by minimizing the number of fixed formats.
 public struct XYZType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
-    public let data: [XYZNumber]
+    public let values: [XYZNumber]
     
     public init(dataStream: inout DataStream, size: UInt32) throws {
         let startPosition = dataStream.position
@@ -24,8 +24,8 @@ public struct XYZType {
         }
         
         /// 0-3 ‘XYZ ‘(58595A20h) type descriptor
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .xyzType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.xyz else {
             throw ICCReadError.corrupted
         }
         
@@ -34,13 +34,13 @@ public struct XYZType {
         
         /// 8-n an array of XYZ numbers XYZNumber
         let count = (Int(size) - 8) / 12
-        var data: [XYZNumber] = []
-        data.reserveCapacity(count)
+        var values: [XYZNumber] = []
+        values.reserveCapacity(count)
         for _ in 0..<count {
-            data.append(try XYZNumber(dataStream: &dataStream))
+            values.append(try XYZNumber(dataStream: &dataStream))
         }
         
-        self.data = data
+        self.values = values
         
         guard dataStream.position - startPosition == size else {
             throw ICCReadError.corrupted

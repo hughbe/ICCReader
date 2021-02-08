@@ -17,7 +17,7 @@ import DataStream
 /// Unicode Consortium or visit http://www.unicode.org.
 /// The format of the utf8ZipType structure can be found in Table 81.
 public struct utf8ZipType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let compressedData: [UInt8]
     
@@ -29,8 +29,8 @@ public struct utf8ZipType {
         }
         
         /// 0..3 4 ‘zut8’ (7a757438h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .utf8ZipType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.utf8Zip else {
             throw ICCReadError.corrupted
         }
         

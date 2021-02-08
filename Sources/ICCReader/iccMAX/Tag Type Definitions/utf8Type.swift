@@ -13,9 +13,9 @@ import DataStream
 /// Unicode Consortium or visit http://www.unicode.org.
 /// The format of the utf8Type structure can be found in Table 80.
 public struct utf8Type {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
-    public let data: String
+    public let value: String
     
     public init(dataStream: inout DataStream, size: UInt32) throws {
         let startPosition = dataStream.position
@@ -25,8 +25,8 @@ public struct utf8Type {
         }
         
         /// 0..3 4 ‘utf8’ (75746638h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .utf8Type else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.utf8 else {
             throw ICCReadError.corrupted
         }
         
@@ -34,7 +34,7 @@ public struct utf8Type {
         self.reserved = try dataStream.read(endianess: .bigEndian)
         
         /// 8..end UTF-8 data
-        self.data = try dataStream.readString(count: Int(size - 8), encoding: .utf8)!.trimmingCharacters(in: ["\0"])
+        self.value = try dataStream.readString(count: Int(size - 8), encoding: .utf8)!.trimmingCharacters(in: ["\0"])
         
         guard dataStream.position - startPosition == size else {
             throw ICCReadError.corrupted

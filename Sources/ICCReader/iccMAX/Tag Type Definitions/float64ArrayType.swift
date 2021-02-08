@@ -12,7 +12,7 @@ import DataStream
 /// determined from the size of the tag.
 /// When used, the byte assignment and encoding shall be as given in Table 50.
 public struct float64ArrayType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let values: [Double]
     
@@ -24,8 +24,8 @@ public struct float64ArrayType {
         }
         
         /// 0..3 4 'fl64' (666c3634h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .float64ArrayType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.float64Array else {
             throw ICCReadError.corrupted
         }
         

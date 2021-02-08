@@ -12,7 +12,7 @@ import DataStream
 /// The viewing condition described in this tag is the actual viewing condition assumed for the media for which the profile is defined,
 /// specified in un-normalized CIEXYZ values. Note that the luminanceTag shall be the same as the Y value given in this tag.
 public struct viewingConditionsType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let illuminant: XYZNumber
     public let surround: XYZNumber
@@ -26,8 +26,8 @@ public struct viewingConditionsType {
         }
         
         /// 0 to 3 4 ‘view’ (76696577h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .viewingConditionsType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.viewingConditions else {
             throw ICCReadError.corrupted
         }
         

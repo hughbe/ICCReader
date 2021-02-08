@@ -11,7 +11,7 @@ import DataStream
 /// This type represents an array of generic 2-byte (16-bit) quantity. The number of values is determined from the size of the tag.
 /// When used the byte assignment and encoding shall be as given in Table 77.
 public struct uInt16ArrayType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let values: [UInt16]
     
@@ -23,8 +23,8 @@ public struct uInt16ArrayType {
         }
         
         /// 0 to 3 4 ‘ui16’ (75693136h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .uInt16ArrayType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.uInt16Array else {
             throw ICCReadError.corrupted
         }
         

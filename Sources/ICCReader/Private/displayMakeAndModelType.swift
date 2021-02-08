@@ -8,7 +8,7 @@
 import DataStream
 
 public struct displayMakeAndModelType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let manufacturer: UInt32
     public let model: UInt32
@@ -23,8 +23,8 @@ public struct displayMakeAndModelType {
         }
         
         /// 0 to 3 4 ‘mmod’ (6d6d6f64h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .displayMakeAndModelType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.displayMakeAndModel else {
             throw ICCReadError.corrupted
         }
         

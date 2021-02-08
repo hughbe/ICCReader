@@ -15,7 +15,7 @@ import DataStream
 /// end of each sparse matrix being aligned on a 4 byte boundary.
 /// All sparse matrices in the sparseMatrixArrayType shall have the same number of rows and columns.
 public struct sparseMatrixArrayType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let numberOfChannels: uInt16Number
     public let matrixType: sparseMatrixEncodingType
@@ -30,8 +30,8 @@ public struct sparseMatrixArrayType {
         }
         
         /// 0…3 4 'smat' (736d6174h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .sparseMatrixArrayType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.sparseMatrixArray else {
             throw ICCReadError.corrupted
         }
         

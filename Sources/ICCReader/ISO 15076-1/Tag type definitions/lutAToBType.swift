@@ -37,7 +37,7 @@ import DataStream
 /// and the operation is not performed.
 /// This tag type may be used independent of the value of the PCS field specified in the header.
 public struct lutAToBType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let inputChan: UInt8
     public let outputChan: UInt8
@@ -61,8 +61,8 @@ public struct lutAToBType {
         }
         
         /// 0 to 3 4 ‘mAB ’ (6D414220h) [multi-function A-to-B table] type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .lutAToBType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.lutAToB else {
             throw ICCReadError.corrupted
         }
         

@@ -22,9 +22,9 @@ import DataStream
 /// If the Element tag type signature is not ‘tags’ (74616773h) then the Element struct type identifier shall be zero (0h).
 /// The Offset of multiple tag elements can be the same (IE tag elements can share tag data).
 public struct tagArrayType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
-    public let typeIdentifier: KnownSignature<StructSignature>
+    public let typeIdentifier: ICCSignature
     public let count: UInt32
     public let values: [[UInt8]]
     
@@ -36,8 +36,8 @@ public struct tagArrayType {
         }
         
         /// 0..3 4 ‘tary’ (74617279h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .tagArrayType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.tagArray else {
             throw ICCReadError.corrupted
         }
         
@@ -45,7 +45,7 @@ public struct tagArrayType {
         self.reserved = try dataStream.read(endianess: .bigEndian)
         
         /// 8..11 4 Array Type Identifier 4-byte signature
-        self.typeIdentifier = try KnownSignature(dataStream: &dataStream)
+        self.typeIdentifier = try ICCSignature(dataStream: &dataStream)
         
         /// 12..15 4 Number of tag elements in array (N) uInt32Number
         let count: UInt32 = try dataStream.read(endianess: .bigEndian)

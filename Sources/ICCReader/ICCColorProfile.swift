@@ -30,6 +30,7 @@ import Foundation
 public struct ICCColorProfile {
     public let header: ExtendedProfileHeader
     public let tags: [ICCTag]
+    private let tagsDictionary: [String: ICCTag]
     
     public init(data: Data) throws {
         var dataStream = DataStream(data)
@@ -43,11 +44,14 @@ public struct ICCColorProfile {
         self.header = try ExtendedProfileHeader(dataStream: &dataStream)
 
         /// b) a profile tag table as defined in 7.3;
-        let tagTable = try TagTable(dataStream: &dataStream)
+        let iccTagTable = try ICCTagTable(dataStream: &dataStream)
         let endPosition = dataStream.position
         
         var tags: [ICCTag] = []
-        tags.reserveCapacity(Int(tagTable.count))
+        tags.reserveCapacity(Int(iccTagTable.count))
+        
+        var tagsDictionary: [String: ICCTag] = [:]
+        tagsDictionary.reserveCapacity(Int(iccTagTable.count))
 
         /// c) a profile tagged element data as defined in 7.4.
         /// 7.4 Tag data
@@ -55,7 +59,7 @@ public struct ICCColorProfile {
         /// data element, shall be padded by no more than three following pad bytes to reach a 4-byte boundary. The size of individual
         /// tag data elements and the accumulated size of all tag data elements shall only be restricted by the limits imposed by the
         /// 32-bit tag data offset value and the 32-bit tag data element size value.
-        for tag in tagTable.tags {
+        for tag in iccTagTable.tags {
             guard tag.offset >= endPosition &&
                     tag.offset + tag.size <= dataStream.count else {
                 throw ICCReadError.corrupted
@@ -63,18 +67,21 @@ public struct ICCColorProfile {
             
             let dataStartPosition = startPosition + Int(tag.offset)
             dataStream.position = dataStartPosition
-            tags.append(try ICCTag(signature: tag.sig, dataStream: &dataStream, size: tag.size, header: self.header))
-
-            let remainingCount = (dataStream.position - dataStartPosition) % 4
-            if remainingCount > 0 {
-                let excessBytes = 4 - remainingCount
-                if dataStream.position + excessBytes <= dataStream.count {
-                    dataStream.position += excessBytes
-                }
-                
-            }
+            
+            let tagValue = try ICCTag(signature: tag.sig, dataStream: &dataStream, size: tag.size, header: self.header)
+            tags.append(tagValue)
+            tagsDictionary[tagValue.signature.rawValue] = tagValue
         }
         
         self.tags = tags
+        self.tagsDictionary = tagsDictionary
+    }
+    
+    public func getTag(signature: String) -> ICCTag? {
+        return tagsDictionary[signature]
+    }
+    
+    public func getTag(signature: ICCSignature) -> ICCTag? {
+        return getTag(signature: signature.rawValue)
     }
 }

@@ -21,27 +21,27 @@ import DataStream
 /// to ISO 15076-1 or optionally zero filled.
 public struct ExtendedProfileHeader {
     public let size: UInt32
-    public let cmmId: Signature
+    public let cmmId: ICCSignature
     public let version: ProfileVersion
-    public let deviceClass: ProfileClassSignature
-    public let colorSpace: KnownSignature<ColorSpaceSignature>
-    public let pcs: ColorSpaceSignature
+    public let deviceClass: ICCSignature
+    public let colorSpace: ICCSignature
+    public let pcs: ICCSignature
     public let date: dateTimeNumber
-    public let magic: Signature
-    public let platform: KnownSignature<PlatformSignature>
+    public let magic: ICCSignature
+    public let platform: ICCSignature
     public let flags: ProfileFlags
-    public let manufacturer: Signature
-    public let model: Signature
+    public let manufacturer: ICCSignature
+    public let model: ICCSignature
     public let attributes: DeviceAttributes
     public let renderingIntent: RenderingIntent
     public let illuminant: XYZNumber
-    public let creator: Signature
+    public let creator: ICCSignature
     public let profileID: (UInt64, UInt64)
     public let spectralPcs: SpectralProfileClassSignature
     public let spectralPcsWavelengthRange: spectralRange
     public let biSpectralPcsWavelengthRange: spectralRange
     public let multiplexColorSpace: MultiplexColorSpaceSignature
-    public let deviceSubClass: Signature
+    public let deviceSubClass: ICCSignature
     public let reserved: [UInt8]
     
     public init(dataStream: inout DataStream) throws {
@@ -54,16 +54,16 @@ public struct ExtendedProfileHeader {
         /// 7.2.5 Preferred CMM type field (bytes 4 to 7)
         /// This field may be used to identify the preferred CMM to be used. If used, it shall match a CMM type signature registered in
         /// the ICC CMM registry. If no preferred CMM is identified, this field shall be zero (00000000h).
-        self.cmmId = try Signature(dataStream: &dataStream)
+        self.cmmId = try ICCSignature(dataStream: &dataStream)
         
         /// 8 to 11 4 Profile version and sub-version number uInt32Number; see 7.2.6
         self.version = try ProfileVersion(dataStream: &dataStream)
         
         /// 12 to 15 4 Profile/device class 4-byte signature; see 7.2.7
-        self.deviceClass = try ProfileClassSignature(dataStream: &dataStream)
+        self.deviceClass = try ICCSignature(dataStream: &dataStream)
         
         /// 16 to 19 4 Colour space of data (possibly a derived space) 4-byte signature; see
-        self.colorSpace = try KnownSignature(dataStream: &dataStream)
+        self.colorSpace = try ICCSignature(dataStream: &dataStream)
         
         /// 20 to 23 4 PCS 4-byte signature; see 7.2.9
         /// 7.2.9 PCS field (Bytes 20 to 23)
@@ -76,30 +76,30 @@ public struct ExtendedProfileHeader {
         /// to encode the colour space implied by the PCS field of the profile header. These colour space signatures define both the
         /// colour space type and the number of channels associated with the colour space.
         /// Table 16 — Non-spectral PCS colour space signatures
-        /// Colour space type Signature Hexidecimal encoding
+        /// Colour space type signature Hexidecimal encoding
         /// nCIEXYZ or PCSXYZa ‘XYZ ’ 58595A20h
         /// CIELAB or PCSLABb ‘Lab ’ 4C616220h
         /// None (spectral PCS defined by spectral PCS header field) 0 00000000h
-        /// a The signature 'XYZ ' refers to nCIEXYZ or PCSXYZ, depending upon the context.
-        /// b The signature 'Lab' refers to CIELAB or PCSLAB, depending upon the context.
+        /// a The Signature 'XYZ ' refers to nCIEXYZ or PCSXYZ, depending upon the context.
+        /// b The Signature 'Lab' refers to CIELAB or PCSLAB, depending upon the context.
         /// Channel encoding order shall be associated with the order that channel names are identified in the signature.
-        self.pcs = try ColorSpaceSignature(dataStream: &dataStream)
+        self.pcs = try ICCSignature(dataStream: &dataStream)
         
         /// 24 to 35 12 Date and time this profile was first created dateTimeNumber; see 7.2.10
         /// 7.2.10 Date and time field (bytes 24 to 35)
         /// This header field shall contain the date and time that the profile was first created, encoded as a dateTimeNumber.
         self.date = try dateTimeNumber(dataStream: &dataStream)
         
-        /// 36 to 39 4 ‘acsp’ (61637370h) profile file signature 4-byte signature; see 7.2.11
-        /// 7.2.11 Profile file signature field (bytes 36 to 39)
-        /// The profile file signature field shall contain the value ‘acsp’ (61637379h) as a profile file signature.
-        self.magic = try Signature(dataStream: &dataStream)
+        /// 36 to 39 4 ‘acsp’ (61637370h) profile file Signature 4-byte signature; see 7.2.11
+        /// 7.2.11 Profile file Signature field (bytes 36 to 39)
+        /// The profile file Signature field shall contain the value ‘acsp’ (61637379h) as a profile file Signature.
+        self.magic = try ICCSignature(dataStream: &dataStream)
         guard self.magic == "acsp" else {
             throw ICCReadError.corrupted
         }
         
-        /// 40 to 43 4 Primary platform signature 4-byte signature; see 7.2.12
-        self.platform = try KnownSignature(dataStream: &dataStream)
+        /// 40 to 43 4 Primary platform Signature 4-byte signature; see 7.2.12
+        self.platform = try ICCSignature(dataStream: &dataStream)
         
         /// 44 to 47 4 Profile flags to indicate various options for the CMM such as distributed processing and caching options
         /// uInt32Number; see 7.2.13
@@ -108,16 +108,16 @@ public struct ExtendedProfileHeader {
         /// 48 to 51 4 Device manufacturer of the device for which this profile is created 4-byte signature; see 7.2.14
         /// 7.2.14 Device manufacturer field (bytes 48 to 51)
         /// This field may be used to identify a device manufacturer. If used, the signature shall match the signature contained in the
-        /// appropriate section of the ICC signature registry at http://www.color.org (see Clause 5).
+        /// appropriate section of the ICC Signature registry at http://www.color.org (see Clause 5).
         /// If not used, this field shall be zero (00000000h).
-        self.manufacturer = try Signature(dataStream: &dataStream)
+        self.manufacturer = try ICCSignature(dataStream: &dataStream)
         
         /// 52 to 55 4 Device model of the device for which this profile is created 4-byte signature; see 7.2.15
         /// 7.2.15 Device model field (bytes 52 to 55)
         /// This field may be used to identify a device model. If used, the signature shall match the signature contained in the
-        /// appropriate section of the ICC signature registry at http://www.color.org (see Clause 5).
+        /// appropriate section of the ICC Signature registry at http://www.color.org (see Clause 5).
         /// If not used, this field shall be zero (00000000h).
-        self.model = try Signature(dataStream: &dataStream)
+        self.model = try ICCSignature(dataStream: &dataStream)
         
         /// 56 to 63 8 Device attributes unique to the particular device setup such as media type uInt64Number see 7.2.16
         self.attributes = try DeviceAttributes(dataStream: &dataStream)
@@ -137,13 +137,13 @@ public struct ExtendedProfileHeader {
         /// considered as D50.
         self.illuminant = try XYZNumber(dataStream: &dataStream)
         
-        /// 80 to 83 4 Profile creator signature 4-byte signature; see 7.2.19
+        /// 80 to 83 4 Profile creator Signature 4-byte signature; see 7.2.19
         /// 7.2.19 Profile creator field (bytes 80 to 83)
         /// This field may be used to identify the creator of the profile. If used, the signature should match the signature contained in
-        /// the device manufacturer section of the ICC signature registry at http://www.color.org. If not used, this field shall
+        /// the device manufacturer section of the ICC Signature registry at http://www.color.org. If not used, this field shall
         /// be zero (00000000h).
-        self.creator = try Signature(dataStream: &dataStream)
-        
+        self.creator = try ICCSignature(dataStream: &dataStream)
+
         /// 84 to 99 16 Profile ID uInt64Number[2]; see 7.2.20
         /// 7.2.20 Profile ID field (bytes 84 to 99)
         /// This field, if not zero (00h), shall hold the profile ID. The profile ID shall be calculated using the MD5 fingerprinting method
@@ -160,7 +160,7 @@ public struct ExtendedProfileHeader {
         
         /// 104 to 109 6 Spectral PCS wavelength range spectralRange; See 7.2.22
         /// 7.2.22 Spectral PCS range field (bytes 104 to 109)
-        /// This field shall specify the spectral range used for a spectrally-based PCS when the spectralPCS signature field in the
+        /// This field shall specify the spectral range used for a spectrally-based PCS when the spectralPCS Signature field in the
         /// profile header is non-zero. If the spectralPCS field is zero then this field shall be zero.
         /// Spectra are normally represented according to their canonical basis, i.e. the spectrum is sampled at equal intervals along
         /// the wavelength axis. The wavelength range is represented by a start wavelength (S), end wavelength (E) and number of
@@ -174,7 +174,7 @@ public struct ExtendedProfileHeader {
         /// 110 to 115 6 Bi-spectral PCS wavelength range spectralRange; see 7.2.23
         /// 7.2.23 Bi-Spectral PCS range field (bytes 110 to 115)
         /// This field shall specify the spectral range of the incident light used for a spectrally-based PCS when the spectralPCS
-        /// signature field in the profile header indicates the use of Bi-spectral reflectance. Otherwise this field shall be zero.
+        /// Signature field in the profile header indicates the use of Bi-spectral reflectance. Otherwise this field shall be zero.
         /// Bi-spectral reflectance characterizes of the interaction of light with a diffuse surface using a Donaldson matrix.
         /// The multiplication of such a matrix by a vector representing the illumination results in a vector representing the light
         /// reflected off the surface. Columns of a Donaldson matrix correspond to incident wavelengths of light and rows of a
@@ -185,16 +185,16 @@ public struct ExtendedProfileHeader {
         /// a more complete description of colour to be encoded than using only spectral reflectance or simple colorimetry.
         self.biSpectralPcsWavelengthRange = try spectralRange(dataStream: &dataStream)
         
-        /// 116 to 119 4 MCS signature uInt32Number; see 7.2.24
+        /// 116 to 119 4 MCS Signature uInt32Number; see 7.2.24
         self.multiplexColorSpace = try MultiplexColorSpaceSignature(dataStream: &dataStream)
         
         /// 120 to 123 4 Profile/device sub-class 4-byte signature; see 7.2.25
         /// 7.2.25 Profile/device sub-class (bytes 124 to 127)
-        /// This field allows for a profile/device subclass signature associated with the profile class. This field’s purpose is to provide
+        /// This field allows for a profile/device subclass Signature associated with the profile class. This field’s purpose is to provide
         /// a connection with ICS documents that provide specifications for specific colour management workflows. If this field is zero
         /// then no profile/device subclass shall be associated with the profile type. When this field is set then the profile sub-version
         /// field shall also identify the version associated with the profile/device sub-class that can be referenced with an ICS document.
-        self.deviceSubClass = try Signature(dataStream: &dataStream)
+        self.deviceSubClass = try ICCSignature(dataStream: &dataStream)
         
         /// 124 to 127 4 Reserved bytes shall be zero (00h) uInt32Number; see 7.2.26
         /// 7.2.26 Reserved field (bytes 124 to 127)
@@ -242,198 +242,167 @@ public struct ExtendedProfileHeader {
     }
 
     /// 7.2.7 Profile/device class field (bytes 12 to15)
-    /// This field shall contain one of the profile class signatures shown in Table 14.
+    /// This field shall contain one of the profile class Signatures shown in Table 14.
     /// There are three basic classes of device profiles: Input, Display and Output profiles. In addition to the three basic device profile
     /// classes, eight additional colour processing profiles are defined. These profiles provide a standard implementation for use by
     /// the CMM in general colour processing, or for the convenience of CMMs which may use these types to store calculated transforms.
     /// These eight additional profile classes are DeviceLink, ColorSpace, ColorEncodingSpace, Abstract, NamedColor,
     /// MultiplexIdentification, MultiplexLink and MultiplexVisualization.
-    public enum ProfileClassSignature: String {
+    public enum ProfileClassSignature {
         /// Input Device profile ‘scnr’ 73636E72h
-        case inputDevices = "scnr"
+        public static let inputDevices: ICCSignature = "scnr"
         
         /// Display Device profile ‘mntr’ 6D6E7472h
-        case displayDevices = "mntr"
+        public static let displayDevices: ICCSignature = "mntr"
         
         /// Output Device profile ‘prtr’ 70727472h
-        case outputDevices = "prtr"
+        public static let outputDevices: ICCSignature = "prtr"
         
         /// DeviceLink profile ‘link’ 6C696E6Bh
-        case deviceLink = "link"
+        public static let deviceLink: ICCSignature = "link"
         
         /// ColorSpace profile ‘spac’ 73706163h
-        case colorSpace = "spac"
+        public static let colorSpace: ICCSignature = "spac"
         
         /// Abstract profile ‘abst’ 61627374h
-        case abstract = "abst"
+        public static let abstract: ICCSignature = "abst"
         
         /// NamedColor profile ‘nmcl’ 6E6D636Ch
-        case namedColor = "nmcl"
+        public static let namedColor: ICCSignature = "nmcl"
         
         /// ColorEncodingSpace profile ‘cenc‘ 63656E63h
-        case colorEncodingSpace = "cenc"
+        public static let colorEncodingSpace: ICCSignature = "cenc"
         
         /// MultiplexIdentification profile ‘mid ’ 6D696420h
-        case multiplexIdentification = "mid "
+        public static let multiplexIdentification: ICCSignature = "mid "
         
         /// MultiplexLink profile ‘mlnk’ 6d6c6e6bh
-        case multiplexLink = "mlnk"
+        public static let multiplexLink: ICCSignature = "mlnk"
         
         /// MultiplexVisualization profile ‘mvis’ 6d766973h
-        case multiplexVisualizationor = "mvis"
-        
-        public init(dataStream: inout DataStream) throws {
-            let rawValue = try dataStream.readString(count: 4, encoding: .ascii)!
-            guard let value = Self(rawValue: rawValue) else {
-                throw ICCReadError.corrupted
-            }
-            
-            self = value
-        }
+        public static let multiplexVisualizationor: ICCSignature = "mvis"
     }
     
     /// 7.2.8 Data colour space field (Bytes 16 to 20)
     /// This field shall contain the signature of the data colour space expected on the A side of the profile transforms.
-    /// The names and signatures of the permitted data colour spaces shall be as shown in Table 15.
+    /// The names and Signatures of the permitted data colour spaces shall be as shown in Table 15.
     /// Channel encoding order shall be associated with the order that channel names are identified in the signature (for example given
-    /// signature ‘RGB’ the channel order shall be channel 1 – R, channel 2 – G, channel 3 – B) with the following exceptions: for the
-    /// signature ‘GRAY’ there is only 1 channel; for the signature ‘YCbr’ the channel order shall be channel 1 – Y, channel 2 – Cb,
+    /// Signature ‘RGB’ the channel order shall be channel 1 – R, channel 2 – G, channel 3 – B) with the following exceptions: for the
+    /// Signature ‘GRAY’ there is only 1 channel; for the signature ‘YCbr’ the channel order shall be channel 1 – Y, channel 2 – Cb,
     /// channel 3 – Cr; for xCLR and N channel data the order shall be the same as the incoming device channel order.
     /// For abstract profiles the data colour space signature shall one of the signatures in Table 15. If set to zero the spectral PCS
-    /// signature and spectral range fields shall be used to define the A side of the transform.
+    /// Signature and spectral range fields shall be used to define the A side of the transform.
     /// For MultiplexLink and MultiplexVisualization profiles the data colour space signature shall be zero.
-    public enum ColorSpaceSignature: String {
+    public enum ColorSpaceSignature {
         /// nCIEXYZ or PCSXYZa ‘XYZ ’ 58595A20h
-        /// a The signature 'XYZ ' refers to nCIEXYZ or PCSXYZ, depending upon the context.
-        case xyz = "XYZ "
+        /// a The Signature 'XYZ ' refers to nCIEXYZ or PCSXYZ, depending upon the context.
+        public static let xyz: ICCSignature = "XYZ "
         
         /// CIELAB or PCSLABb ‘Lab ’ 4C616220h
-        /// b The signature 'Lab' refers to CIELAB or PCSLAB, depending upon the context.
-        case lab = "Lab "
+        /// b The Signature 'Lab' refers to CIELAB or PCSLAB, depending upon the context.
+        public static let lab: ICCSignature = "Lab "
         
         /// CIELUV ‘Luv ’ 4C757620h
-        case cieluv = "Luv "
+        public static let cieluv: ICCSignature = "Luv "
 
         /// YCbCr ‘YCbr’ 59436272h
-        case yCbCr = "YCbr"
+        public static let yCbCr: ICCSignature = "YCbr"
         
         /// CIEYxy ‘Yxy ’ 59787920h
-        case yxy = "Yxy "
+        public static let yxy: ICCSignature = "Yxy "
         
         /// LMS ‘LMS ‘ 4C4D5320h
-        case lms = "LMS "
+        public static let lms: ICCSignature = "LMS "
         
         /// RGB ‘RGB ’ 52474220h
-        case rgb = "RGB "
+        public static let rgb: ICCSignature = "RGB "
         
         /// Gray ‘GRAY’ 47524159h
-        case gray = "GRAY"
+        public static let gray: ICCSignature = "GRAY"
         
         /// HSV ‘HSV ’ 48535620h
-        case hsv = "HSV "
+        public static let hsv: ICCSignature = "HSV "
         
         /// HLS ‘HLS ’ 484C5320h
-        case hls = "HLS "
+        public static let hls: ICCSignature = "HLS "
         
         /// CMYK ‘CMYK’ 434D594Bh
-        case cmyk = "CMYK"
+        public static let cmyk: ICCSignature = "CMYK"
         
         /// CMY ‘CMY ’ 434D5920h
-        case cmy = "CMY "
+        public static let cmy: ICCSignature = "CMY "
         
         /// 2 colour ‘2CLR’ 32434C52h
-        case twoColor = "2CLR"
+        public static let twoColor: ICCSignature = "2CLR"
         
         /// 3 colour (other than those listed above) ‘3CLR’ 33434C52h
-        case threeColor = "3CLR"
+        public static let threeColor: ICCSignature = "3CLR"
         
         /// 4 colour (other than CMYK) ‘4CLR’ 34434C52h
-        case fourColor = "4CLR"
+        public static let fourColor: ICCSignature = "4CLR"
         
         /// 5 colour ‘5CLR’ 35434C52h
-        case fiveColor = "5CLR"
+        public static let fiveColor: ICCSignature = "5CLR"
         
         /// 6 colour ‘6CLR’ 36434C52h
-        case sixColor = "6CLR"
+        public static let sixColor: ICCSignature = "6CLR"
         
         /// 7 colour ‘7CLR’ 37434C52h
-        case sevenColor = "7CLR"
+        public static let sevenColor: ICCSignature = "7CLR"
         
         /// 8 colour ‘8CLR’ 38434C52h
-        case eightColor = "8CLR"
+        public static let eightColor: ICCSignature = "8CLR"
         
         /// 9 colour ‘9CLR’ 39434C52h
-        case nineColor = "9CLR"
+        public static let nineColor: ICCSignature = "9CLR"
         
         /// 10 colour ‘ACLR’ 41434C52h
-        case tenColor = "10CLR"
+        public static let tenColor: ICCSignature = "10CLR"
         
         /// 11 colour ‘BCLR’ 42434C52h
-        case elevenColor = "BCLR"
+        public static let elevenColor: ICCSignature = "BCLR"
         
         /// 12 colour ‘CCLR’ 43434C52h
-        case twelveColor = "CCLR"
+        public static let twelveColor: ICCSignature = "CCLR"
         
         /// 13 colour ‘DCLR’ 44434C52h
-        case thirteenColor = "DCLR"
+        public static let thirteenColor: ICCSignature = "DCLR"
         
         /// 14 colour ‘ECLR’ 45434C52h
-        case fourteenColor = "ECLR"
+        public static let fourteenColor: ICCSignature = "ECLR"
         
         /// 15 colour ‘FCLR’ 46434C52h
-        case fifteenColor = "FCLR"
+        public static let fifteenColor: ICCSignature = "FCLR"
         
         /// None 0 00000000h
-        case none = "\0\0\0\0"
-        
-        public init(dataStream: inout DataStream) throws {
-            /// Note: does not implement
-            /// N channel device data Represented as “nc0001” – “ncFFFF” 6e630001h – 6e63FFFFh
-            /// NOTE Extended “N channel device data” signatures use a 32-bit binary encoding (see 6.2.1) with a six-character
-            /// signature representation.
-            let rawValue = try dataStream.readString(count: 4, encoding: .ascii)!
-            guard let value = Self(rawValue: rawValue) else {
-                throw ICCReadError.corrupted
-            }
-            
-            self = value
-        }
+        public static let none: ICCSignature = "\0\0\0\0"
     }
     
     /// 7.2.12 Primary platform field (bytes 40 to 43)
     /// This field may be used to identify the primary platform/operating system framework for which the profile was created.
     /// The primary platforms that have been identified and the signatures that shall be used are shown in Table 17.
     /// If no primary platform is identified, this field shall be zero (00000000h).
-    public enum PlatformSignature: String {
+    public enum PlatformSignature {
         /// Apple Computer, Inc. ‘APPL’ 4150504Ch
-        case appleComputer = "APPL"
+        public static let appleComputer: ICCSignature = "APPL"
         
         /// Microsoft Corporation ‘MSFT’ 4D534654h
-        case microsoftCorporation = "MSFT"
-        case microsoftCorporation2 = "msft"
+        public static let microsoftCorporation: ICCSignature = "MSFT"
+        public static let microsoftCorporation2: ICCSignature = "msft"
         
         /// Silicon Graphics, Inc. ‘SGI ’ 53474920h
-        case siliconGraphics = "SGI "
+        public static let siliconGraphics: ICCSignature = "SGI "
         
         /// Sun Microsystems, Inc. ‘SUNW’ 53554E57h
-        case sunMicrosystems = "SUNW"
+        public static let sunMicrosystems: ICCSignature = "SUNW"
         
         /// [Removed] Taligent, Inc. ‘TGNT ‘ 54474E54h
-        case taligent = "TGNT"
+        public static let taligent: ICCSignature = "TGNT"
         
         /// [Unknown]
-        case unix = "*nix"
+        public static let unix: ICCSignature = "*nix"
         
-        case none = "\0\0\0\0"
-        
-        public init(dataStream: inout DataStream) throws {
-            let rawValue = try dataStream.readString(count: 4, encoding: .ascii)!
-            guard let value = Self(rawValue: rawValue) else {
-                throw ICCReadError.corrupted
-            }
-            
-            self = value
-        }
+        public static let none: ICCSignature = "\0\0\0\0"
     }
 
     /// 7.2.13 Profile flags field (bytes 44 to 47)
@@ -579,8 +548,8 @@ public struct ExtendedProfileHeader {
     /// the colour space type and the number of channels associated with the colour space. Therefore, the number of channels
     /// implied by the spectralPCS colour space signature shall match the number of channels indicated by the steps field(s) of
     /// the corresponding spectralRange structures (7.2.22 and 7.2.23) in the profile header.
-    /// NOTE Spectral colour space signatures use the same 32-bit binary encoding mechanism as N colour device data signatures
-    /// (see 6.2.1), with each having a six-character signature representation.
+    /// NOTE Spectral colour space signatures use the same 32-bit binary encoding mechanism as N colour device data Signatures
+    /// (see 6.2.1), with each having a six-character Signature representation.
     /// Different types of spectral data can be defined. In most circumstances, only reflectance, transmission or emission spectra are
     /// used, but in other circumstances additional data shall be provided according to the processing to be carried out. The range of
     /// normal spectra shall be indicated by the spectral PCS range field in the header (7.2.22). To represent bi-spectral data, a form of
@@ -605,12 +574,12 @@ public struct ExtendedProfileHeader {
         /// Bi-spectral reflectance using sparse matrix with N equivalent output channels ’sm’ (736d) 1 to 65 535 (0001h … FFFFh) 736D0001h … 736DFFFFh “sm0001” … “smFFFF”
         case biSpectralReflectanceUsingSparseMatrix(numberOfChannels: UInt16)
         
-        case unknown(signature: String, numberOfChannels: UInt16)
+        case unknown(Signature: String, numberOfChannels: UInt16)
         
         public init(dataStream: inout DataStream) throws {
-            let signature = try dataStream.readString(count: 2, encoding: .ascii)!
+            let Signature = try dataStream.readString(count: 2, encoding: .ascii)!
             
-            switch signature {
+            switch Signature {
             case "\0\0":
                 let _: UInt16 = try dataStream.read(endianess: .bigEndian)
                 self = .none
@@ -625,7 +594,7 @@ public struct ExtendedProfileHeader {
             case "sm":
                 self = .biSpectralReflectanceUsingSparseMatrix(numberOfChannels: try dataStream.read(endianess: .bigEndian))
             default:
-                self = .unknown(signature: signature, numberOfChannels: try dataStream.read(endianess: .bigEndian))
+                self = .unknown(Signature: Signature, numberOfChannels: try dataStream.read(endianess: .bigEndian))
             }
         }
     }
@@ -636,8 +605,8 @@ public struct ExtendedProfileHeader {
     /// a multiplexTypeArrayTag (see 9.2.85).
     /// For the MultiplexIdentification and MultiplexVisualization profile classes (see Table 14), the MCS encoding shall be one of
     /// the signatures as defined in Table 22.
-    /// NOTE Multiplex colour space signatures use the same 32-bit binary encoding mechanism as N colour device data signatures
-    /// (see 6.2.1), with each having a six-character signature representation.
+    /// NOTE Multiplex colour space signatures use the same 32-bit binary encoding mechanism as N colour device data Signatures
+    /// (see 6.2.1), with each having a six-character Signature representation.
     /// For the input profile class (Table 14) the MCS encoding shall be one of the signatures as defined in Table 23.
     /// For all other profile classes (Table 14) the MCS encoding shall be zero.
     public enum MultiplexColorSpaceSignature {
@@ -647,19 +616,19 @@ public struct ExtendedProfileHeader {
         /// Multiplex channel values with N channels ’mc’ (6d63h) 1 … 65 535 (0001h … FFFFh) 6d630001h … 6d63FFFFh “mc0001” … “mcFFFF”
         case multiplex(numberOfChannels: UInt16)
         
-        case unknown(signature: String, numberOfChannels: UInt16)
+        case unknown(Signature: String, numberOfChannels: UInt16)
         
         public init(dataStream: inout DataStream) throws {
-            let signature = try dataStream.readString(count: 2, encoding: .ascii)!
+            let Signature = try dataStream.readString(count: 2, encoding: .ascii)!
             
-            switch signature {
+            switch Signature {
             case "\0\0":
                 let _: UInt16 = try dataStream.read(endianess: .bigEndian)
                 self = .none
             case "mc":
                 self = .multiplex(numberOfChannels: try dataStream.read(endianess: .bigEndian))
             default:
-                self = .unknown(signature: signature, numberOfChannels: try dataStream.read(endianess: .bigEndian))
+                self = .unknown(Signature: Signature, numberOfChannels: try dataStream.read(endianess: .bigEndian))
             }
         }
     }

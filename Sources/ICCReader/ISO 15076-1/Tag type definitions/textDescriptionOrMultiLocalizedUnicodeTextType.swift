@@ -10,7 +10,7 @@ import DataStream
 /// Tag Type : textDescriptionType xor multiLocalizedUnicodeType
 public enum textDescriptionOrMultiLocalizedUnicodeTextType {
     case textDescription(_: textDescriptionType)
-    case multiLocalizedUnicode(_: multiLocalizedUnicodeType)
+    case multiLocalizedUnicode(_: [multiLocalizedUnicodeType.LocalizedString])
     
     public init(dataStream: inout DataStream, size: UInt32?) throws {
         let startPosition = dataStream.position
@@ -21,13 +21,15 @@ public enum textDescriptionOrMultiLocalizedUnicodeTextType {
             }
         }
         
-        /// 0..3 type signature
-        let sig = try dataStream.peekString(count: 4, encoding: .ascii)!
+        guard let sig = try dataStream.peekString(count: 4, encoding: .ascii) else {
+            throw ICCReadError.corrupted
+        }
+
         switch sig {
-        case TagTypeSignature.textDescriptionType.rawValue:
+        case ICCTagTypeSignature.textDescription.rawValue:
             self = .textDescription(try textDescriptionType(dataStream: &dataStream, size: size))
-        case TagTypeSignature.multiLocalizedUnicodeType.rawValue:
-            self = .multiLocalizedUnicode(try multiLocalizedUnicodeType(dataStream: &dataStream, size: size))
+        case ICCTagTypeSignature.multiLocalizedUnicode.rawValue:
+            self = .multiLocalizedUnicode(try multiLocalizedUnicodeType(dataStream: &dataStream, size: size).values)
         default:
             throw ICCReadError.corrupted
         }

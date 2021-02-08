@@ -10,7 +10,7 @@ import DataStream
 /// [ICC.1:2001-04] 6.5.15 screeningType
 /// The screeningType describes various screening parameters including screen frequency, screening angle, and spot shape.
 public struct screeningType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let screeningFlag: ScreeningFlag
     public let numberOfChannels: UInt32
@@ -24,8 +24,8 @@ public struct screeningType {
         }
         
         /// 0..3 ‘scrn’ (7363726Eh) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .screeningType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.screening else {
             throw ICCReadError.corrupted
         }
         

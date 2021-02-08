@@ -28,7 +28,7 @@ import DataStream
 /// NOTE The parameters selected for a parametric curve can result in complex or undefined values for the input range used. This can
 /// occur, for example, if d < −b/a. In such cases the behaviour of the curve is undefined.
 public struct parametricCurveType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved1: UInt32
     public let functionType: UInt16
     public let reserved2: UInt16
@@ -44,8 +44,8 @@ public struct parametricCurveType {
         }
         
         /// 0 to 3 4 'para' (70617261h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .parametricCurveType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.parametricCurve else {
             throw ICCReadError.corrupted
         }
         

@@ -24,7 +24,7 @@ import DataStream
 /// NOTE The PCSXYZ or PCSLAB values can also be used to derive the visual density of the colorant, which trapping algorithms can
 /// then use to determine overlay values.
 public struct colorantTableType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let numberOfColorants: uInt32Number
     public let values: [Colorant]
@@ -37,8 +37,8 @@ public struct colorantTableType {
         }
         
         /// 0 to 3 4 ‘clrt’ (636c7274h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .colorantTableType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.colorantTable else {
             throw ICCReadError.corrupted
         }
         

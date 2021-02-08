@@ -12,7 +12,7 @@ import DataStream
 /// from the element size portion of the tag itself. This string shall be terminated with a 00h byte.
 /// When used the byte assignment and encoding shall be as given in Table 75.
 public struct textType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let data: String
     
@@ -24,8 +24,8 @@ public struct textType {
         }
         
         /// 0 to 3 4 ‘text’ (74657874h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .textType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.text else {
             throw ICCReadError.corrupted
         }
         

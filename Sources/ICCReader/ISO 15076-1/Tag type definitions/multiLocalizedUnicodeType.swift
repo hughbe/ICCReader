@@ -23,11 +23,11 @@ import DataStream
 /// If the specific record for the desired region is not stored in the tag, the record with the same language code should be used. If the
 /// specific record for the desired language is not stored in the tag, the first record in the tag is used if no other user preference is available.
 public struct multiLocalizedUnicodeType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let numberOfRecords: UInt32
     public let recordSize: UInt32
-    public let strings: [LocalizedString]
+    public let values: [LocalizedString]
     
     public init(dataStream: inout DataStream, size: UInt32?) throws {
         let startPosition = dataStream.position
@@ -39,8 +39,8 @@ public struct multiLocalizedUnicodeType {
         }
         
         /// 0 to 3 4 ‘mluc’ (0x6D6C7563) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .multiLocalizedUnicodeType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.multiLocalizedUnicode else {
             throw ICCReadError.corrupted
         }
         
@@ -66,8 +66,8 @@ public struct multiLocalizedUnicodeType {
         /// 28 to 28+[12(n−1)]−1 (or 15+12n) 12(n−1) Additional records as needed
         /// 28+[12(n−1)] (or 16+12n) to end Variable Storage area of strings of Unicode characters
         var endPosition = dataStream.position
-        var strings: [LocalizedString] = []
-        strings.reserveCapacity(Int(self.numberOfRecords))
+        var values: [LocalizedString] = []
+        values.reserveCapacity(Int(self.numberOfRecords))
         for _ in 0..<self.numberOfRecords {
             let record = try Record(dataStream: &dataStream)
             guard record.offset >= dataPosition &&
@@ -82,12 +82,12 @@ public struct multiLocalizedUnicodeType {
             let localizedString = LocalizedString(languageCode: record.languageCode,
                                                   countryCode: record.countryCode,
                                                   string: string)
-            strings.append(localizedString)
+            values.append(localizedString)
             endPosition = max(dataStream.position, endPosition)
             dataStream.position = oldPosition
         }
         
-        self.strings = strings
+        self.values = values
         
         if let size = size {
             /// Skip the data we've already read.

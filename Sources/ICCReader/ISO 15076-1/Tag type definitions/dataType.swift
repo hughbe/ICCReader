@@ -12,7 +12,7 @@ import DataStream
 /// The length of the string is obtained by subtracting 12 from the tag data element size portion of the tag itself as defined in 7.3.5.
 /// If this type is used for ASCII data, it shall be terminated with a 00h byte. When used, the byte assignment shall be as given in Table 35.
 public struct dataType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let dataFlag: UInt32
     public let data: [UInt8]
@@ -25,8 +25,8 @@ public struct dataType {
         }
         
         /// 0 to 3 4 ‘data’ (64617461h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .dataType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.data else {
             throw ICCReadError.corrupted
         }
         

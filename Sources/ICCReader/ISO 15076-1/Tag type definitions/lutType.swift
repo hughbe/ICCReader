@@ -15,26 +15,25 @@ public enum lutType {
     case lutBToA(_: lutBToAType)
     case multiProcessElements(_: multiProcessElementsType)
     
-    public init(dataStream: inout DataStream, size: UInt32) throws {
+    public init(dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
         let startPosition = dataStream.position
         
         guard size >= 4 else {
             throw ICCReadError.corrupted
         }
         
-        /// 0..3 type signature
-        let sig = try dataStream.peekString(count: 4, encoding: .ascii)!
-        switch sig {
-        case TagTypeSignature.lut8Type.rawValue:
-            self = .lut8(try lut8Type(dataStream: &dataStream, size: size))
-        case TagTypeSignature.lut16Type.rawValue:
-            self = .lut16(try lut16Type(dataStream: &dataStream, size: size))
-        case TagTypeSignature.lutAToBType.rawValue:
-            self = .lutAToB(try lutAToBType(dataStream: &dataStream, size: size))
-        case TagTypeSignature.lutBToAType.rawValue:
-            self = .lutBToA(try lutBToAType(dataStream: &dataStream, size: size))
-        case TagTypeSignature.multiProcessElementsType.rawValue:
-            self = .multiProcessElements(try multiProcessElementsType(dataStream: &dataStream, size: size))
+        let data = try ICCTagData(dataStream: &dataStream, size: size, header: header)
+        switch data {
+        case let .lut8(value):
+            self = .lut8(value)
+        case let .lut16(value):
+            self = .lut16(value)
+        case let .lutAToB(value):
+            self = .lutAToB(value)
+        case let .lutBToA(value):
+            self = .lutBToA(value)
+        case let .multiProcessElements(value):
+            self = .multiProcessElements(value)
         default:
             throw ICCReadError.corrupted
         }

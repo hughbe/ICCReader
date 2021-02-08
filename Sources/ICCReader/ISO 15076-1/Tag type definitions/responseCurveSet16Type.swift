@@ -49,7 +49,7 @@ import DataStream
 /// colour space in Table 38.
 /// When used the byte assignment and structure shall be as given in Table 70.
 public struct responseCurveSet16Type {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let numberOfChannels: uInt16Number
     public let numberOfMeasurementTypes: uInt16Number
@@ -64,8 +64,8 @@ public struct responseCurveSet16Type {
         }
         
         /// 0 to 3 4 ‘rcs2’ (72637332h) [response curve set with 2-byte precision] type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .responseCurveSet16Type else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.responseCurveSet16 else {
             throw ICCReadError.corrupted
         }
         
@@ -108,14 +108,14 @@ public struct responseCurveSet16Type {
     /// Each response curve structure has the format shown in Table 71.
     /// The response arrays shall be ordered with normalized device code elements increasing
     public struct ResponseCurve {
-        public let measurementUnitSig: KnownSignature<MeasurementSignature>
+        public let measurementUnitSig: ICCSignature
         public let measurements: [uInt32Number]
         public let values: [XYZNumber]
         public let responseArrays: [[response16Number]]
         
         public init(dataStream: inout DataStream, numberOfChannels: UInt16) throws {
-            /// 0 to 3 4 Measurement unit signature see Table 72
-            self.measurementUnitSig = try KnownSignature(dataStream: &dataStream)
+            /// 0 to 3 4 Measurement unit Signature see Table 72
+            self.measurementUnitSig = try ICCSignature(dataStream: &dataStream)
             
             /// 4 to (3 + 4 n) 4n n counts of measurements in response arrays, one for each channel i. Each count of measurements,
             /// qi, shall be the count of response16Numbers in the response array for channel i p shall be the sum of the counts qi
@@ -161,7 +161,7 @@ public struct responseCurveSet16Type {
         }
     }
     
-    /// 0 to 3 4 Measurement unit signature see Table 72
+    /// 0 to 3 4 Measurement unit Signature see Table 72
     /// The measurement unit shall be encoded as shown in Table 72.
     public enum MeasurementSignature: String {
         /// Status A ISO 5-3 densitometer response. This is the accepted standard for reflection densitometers for measuring

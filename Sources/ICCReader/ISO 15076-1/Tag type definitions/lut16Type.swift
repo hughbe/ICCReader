@@ -16,7 +16,7 @@ import Foundation
 /// (matrix) ⇒ (1D input tables) ⇒ (multi-dimensional lookup table, CLUT) ⇒ (1D output tables).
 /// When used the byte assignment shall be as given in Table 37.
 public struct lut16Type {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let inputChan: UInt8
     public let outputChan: UInt8
@@ -45,8 +45,8 @@ public struct lut16Type {
         }
         
         /// 0 to 3 4 ‘mft2’ (6D667432h) [multi-function table with 2-byte precision] type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .lut16Type else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.lut16 else {
             throw ICCReadError.corrupted
         }
         

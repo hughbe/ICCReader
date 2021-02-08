@@ -1,5 +1,5 @@
 //
-//  icSignature.swift
+//  ICCSignature.swift
 //  
 //
 //  Created by Hugh Bellamy on 11/12/2020.
@@ -7,7 +7,7 @@
 
 import DataStream
 
-public struct Signature: Hashable, RawRepresentable, ExpressibleByStringLiteral {
+public struct ICCSignature: Hashable, RawRepresentable, ExpressibleByStringLiteral {
     public let value: String
     
     public var rawValue: String {
