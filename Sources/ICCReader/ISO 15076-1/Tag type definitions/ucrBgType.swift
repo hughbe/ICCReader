@@ -14,7 +14,7 @@ import DataStream
 /// immediately follows the UCR curve values, its alignment is not correct when the UCR count is odd. Profile reading and writing
 /// software must be written carefully in order to handle this alignment problem.
 public struct ucrBgType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let ucrCount: UInt32
     public let ucrCurve: [UInt16]
@@ -30,8 +30,8 @@ public struct ucrBgType {
         }
         
         /// 0..3 ‘bfd ’ (62666420h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .ucrBgType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.ucrBg else {
             throw ICCReadError.corrupted
         }
         

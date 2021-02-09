@@ -11,7 +11,7 @@ import DataStream
 /// This type represents an array of generic 1–byte (8-bit) quantity. The number of values is determined from the size of the tag.
 /// When used the byte assignment and encoding shall be as given in Table 80.
 public struct uInt8ArrayType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let values: [UInt8]
     
@@ -23,8 +23,8 @@ public struct uInt8ArrayType {
         }
         
         /// 0 to 3 4 ‘ui08’ (75693038h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .uInt8ArrayType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.uInt8Array else {
             throw ICCReadError.corrupted
         }
         

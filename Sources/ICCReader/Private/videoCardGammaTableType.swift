@@ -10,7 +10,7 @@ import DataStream
 /// https://github.com/akavel/plan9/blob/master/sys/src/cmd/gs/icclib/icc.h#L706-L738
 /// https://github.com/OpenICC/xcalib/blob/master/xcalib.c
 public struct videoCardGammaTableType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let gammaType: GammaType
     public let data: GammaData
@@ -23,8 +23,8 @@ public struct videoCardGammaTableType {
         }
         
         /// 0 to 3 4 ‘vcgt’ (76636774h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .videoCardGammaTableType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.videoCardGammaTable else {
             throw ICCReadError.corrupted
         }
         

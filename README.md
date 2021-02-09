@@ -13,8 +13,17 @@ Add the following line to your project's SwiftPM dependencies:
 import ICCReader
 
 let data = Data(contentsOfFile: "<path-to-file>.icm")!
-let file = try ICCColorProfile(data: data)
-for tag in file.tags {
-print(tag)
+let profile = try ICCColorProfile(data: data)
+
+// Dump all the tags.
+for tag in profile.tags {
+    print(tag.signature)
+    print(tag.type)
+    print(tag.data)
 }
+
+// Print known tags (e.g. copyright)
+print(profile.getTag(signature: "cprt"))
+print(profile.getTag(signature: ICCTagSignature.copyright))
+print(profile.copyright)
 ```

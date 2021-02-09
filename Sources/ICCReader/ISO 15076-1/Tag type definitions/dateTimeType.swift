@@ -11,7 +11,7 @@ import DataStream
 /// This dateTimeType is a 12-byte value representation of the time and date. The actual values are encoded as a dateTimeNumber
 /// described in 4.2. When used the byte assignment shall be as given in Table 36.
 public struct dateTimeType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let date: dateTimeNumber
     
@@ -23,8 +23,8 @@ public struct dateTimeType {
         }
         
         /// 0 to 3 4 ‘dtim’ (6474696Dh) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .dateTimeType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.dateTime else {
             throw ICCReadError.corrupted
         }
         

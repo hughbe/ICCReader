@@ -63,7 +63,7 @@ import DataStream
 /// — Multiple numbers stored in a single string shall be separated by one comma ‘,’ between adjacent
 /// numbers.
 public struct dictType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let count: UInt32
     public let recordLength: UInt32
@@ -77,8 +77,8 @@ public struct dictType {
         }
         
         /// 0 to 3 4 ‘dict’ (64696374h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .dictType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.dict else {
             throw ICCReadError.corrupted
         }
         

@@ -18,7 +18,7 @@ import DataStream
 /// 00h pad bytes as needed.
 /// Each profile identifier structure has the format shown in Table 69.
 public struct profileSequenceIdentifierType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let count: UInt32
     public let values: [ProfileIdentifier]
@@ -31,8 +31,8 @@ public struct profileSequenceIdentifierType {
         }
         
         /// 0 to 3 4 ‘psid’ (70736964h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .profileSequenceIdentifierType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.profileSequenceIdentifier else {
             throw ICCReadError.corrupted
         }
         

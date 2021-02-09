@@ -17,7 +17,7 @@ import DataStream
 /// by the World Wide Web Consortium or visit http://www.w3.org/TR/REC-xml.
 /// The format of the zipXmlType structure can be found in Table 83.
 public struct zipXmlType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let compressedData: [UInt8]
     
@@ -29,8 +29,8 @@ public struct zipXmlType {
         }
         
         /// 0..3 4 ‘zxml’ (7a786d6ch) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .zipXmlType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.zipXml else {
             throw ICCReadError.corrupted
         }
         

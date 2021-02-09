@@ -26,7 +26,7 @@ import DataStream
 /// NOTE Euler’s formula can be used to verify that the volume is closed.
 /// Annex B provides details of the encoding and use of a gamutBoundaryDescriptionType.
 public struct gamutBoundaryDescriptionType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let numberOfPCSChannels: UInt16
     public let numberOfDeviceChannels: UInt16
@@ -44,8 +44,8 @@ public struct gamutBoundaryDescriptionType {
         }
         
         /// 0..3 4 'gbd ' (67626420h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .gamutBoundaryDescriptionType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.gamutBoundaryDescription else {
             throw ICCReadError.corrupted
         }
         

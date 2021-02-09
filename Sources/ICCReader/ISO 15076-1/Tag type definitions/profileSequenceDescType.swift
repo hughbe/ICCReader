@@ -20,7 +20,7 @@ import DataStream
 /// Also note that the entire tag, including the tag type, should be stored.
 /// If the technologyTag is not present, bytes 16 to 19 should be 00000000h.
 public struct profileSequenceDescType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let count: UInt32
     public let values: [ProfileDescription]
@@ -33,8 +33,8 @@ public struct profileSequenceDescType {
         }
         
         /// 0 to 3 4 ‘pseq’ (70736571h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .profileSequenceDescType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.profileSequenceDesc else {
             throw ICCReadError.corrupted
         }
         
@@ -70,17 +70,17 @@ public struct profileSequenceDescType {
         public let modelDescription: textDescriptionOrMultiLocalizedUnicodeTextType?
         
         public init(dataStream: inout DataStream, startPosition: Int, size: UInt32) throws {
-            /// 0 to 3 4 Device manufacturer signature (from corresponding profile’s header)
+            /// 0 to 3 4 Device manufacturer Signature (from corresponding profile’s header)
             self.manufacturer = try dataStream.read(endianess: .bigEndian)
             
-            /// 4 to 7 4 Device model signature (from corresponding profile’s header)
+            /// 4 to 7 4 Device model Signature (from corresponding profile’s header)
             self.model = try dataStream.read(endianess: .bigEndian)
             
             /// 8 to 15 8 Device attributes (from corresponding profile’s header)
             self.attributes = try dataStream.read(endianess: .bigEndian)
             
             /// 16 to 19 4 Device technology information such as CRT, dye sublimation, etc. (corresponding to profile’s technology
-            /// signature)
+            /// Signature)
             self.technology = try dataStream.read(endianess: .bigEndian)
             
             if dataStream.position - startPosition == size {

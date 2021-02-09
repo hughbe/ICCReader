@@ -24,9 +24,9 @@ public enum curveOrParametricCurveType {
         /// 0..3 type signature
         let sig = try dataStream.peekString(count: 4, encoding: .ascii)!
         switch sig {
-        case TagTypeSignature.curveType.rawValue:
+        case ICCTagTypeSignature.curve.rawValue:
             self = .curve(try curveType(dataStream: &dataStream, size: size))
-        case TagTypeSignature.parametricCurveType.rawValue:
+        case ICCTagTypeSignature.parametricCurve.rawValue:
             self = .parametricCurve(try parametricCurveType(dataStream: &dataStream, size: size))
         default:
             throw ICCReadError.corrupted

@@ -12,10 +12,10 @@ import DataStream
 /// at the end with spaces, 20h. Typically this type is used for registered tags that can be displayed on many development systems as a
 /// sequence of four characters.
 /// When used the byte assignment and encoding shall be as given in Table 74.
-public struct signatureType<T> where T: RawRepresentable, T.RawValue == String {
-    public let sig: TagTypeSignature
+public struct signatureType {
+    public let sig: ICCSignature
     public let reserved: uInt32Number
-    public let signature: KnownSignature<T>
+    public let signature: ICCSignature
     
     public init(dataStream: inout DataStream, size: UInt32) throws {
         let startPosition = dataStream.position
@@ -25,8 +25,8 @@ public struct signatureType<T> where T: RawRepresentable, T.RawValue == String {
         }
         
         /// 0 to 3 4 ‘sig ’ (73696720h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .signatureType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.Signature else {
             throw ICCReadError.corrupted
         }
         
@@ -34,7 +34,7 @@ public struct signatureType<T> where T: RawRepresentable, T.RawValue == String {
         self.reserved = try dataStream.read(endianess: .bigEndian)
         
         /// 8 to 11 4 4-byte signature
-        self.signature = try KnownSignature(dataStream: &dataStream)
+        self.signature = try ICCSignature(dataStream: &dataStream)
         
         guard dataStream.position - startPosition == size else {
             throw ICCReadError.corrupted

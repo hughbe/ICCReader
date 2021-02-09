@@ -14,7 +14,7 @@ import DataStream
 /// identified by the “color space of data” field of the profile header. In order to maintain maximum portability it is strongly recommended
 /// that special characters of the 7-bit ASCII set not be used.
 public struct namedColorType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let vendorFlag: UInt32
     public let count: UInt32
@@ -30,8 +30,8 @@ public struct namedColorType {
         }
         
         /// 0..3 ‘ncol’ (6E636F6Ch) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .namedColorType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.namedColor else {
             throw ICCReadError.corrupted
         }
         
@@ -87,65 +87,62 @@ public struct namedColorType {
             
             let coordinateCount: Int
             switch header.colorSpace {
-            case .unknown:
+            case ExtendedProfileHeader.ColorSpaceSignature.xyz:
+                coordinateCount = 3
+            case ExtendedProfileHeader.ColorSpaceSignature.lab:
+                coordinateCount = 3
+            case ExtendedProfileHeader.ColorSpaceSignature.cieluv:
+                coordinateCount = 3
+            case ExtendedProfileHeader.ColorSpaceSignature.yCbCr:
+                coordinateCount = 3
+            case ExtendedProfileHeader.ColorSpaceSignature.yxy:
+                coordinateCount = 3
+            case ExtendedProfileHeader.ColorSpaceSignature.lms:
+                coordinateCount = 3
+            case ExtendedProfileHeader.ColorSpaceSignature.rgb:
+                coordinateCount = 3
+            case ExtendedProfileHeader.ColorSpaceSignature.gray:
+                coordinateCount = 1
+            case ExtendedProfileHeader.ColorSpaceSignature.hsv:
+                coordinateCount = 3
+            case ExtendedProfileHeader.ColorSpaceSignature.hls:
+                coordinateCount = 3
+            case ExtendedProfileHeader.ColorSpaceSignature.cmyk:
+                coordinateCount = 4
+            case ExtendedProfileHeader.ColorSpaceSignature.cmy:
+                coordinateCount = 3
+            case ExtendedProfileHeader.ColorSpaceSignature.twoColor:
+                coordinateCount = 2
+            case ExtendedProfileHeader.ColorSpaceSignature.threeColor:
+                coordinateCount = 3
+            case ExtendedProfileHeader.ColorSpaceSignature.fourColor:
+                coordinateCount = 4
+            case ExtendedProfileHeader.ColorSpaceSignature.fiveColor:
+                coordinateCount = 5
+            case ExtendedProfileHeader.ColorSpaceSignature.sixColor:
+                coordinateCount = 6
+            case ExtendedProfileHeader.ColorSpaceSignature.sevenColor:
+                coordinateCount = 7
+            case ExtendedProfileHeader.ColorSpaceSignature.eightColor:
+                coordinateCount = 8
+            case ExtendedProfileHeader.ColorSpaceSignature.nineColor:
+                coordinateCount = 9
+            case ExtendedProfileHeader.ColorSpaceSignature.tenColor:
+                coordinateCount = 10
+            case ExtendedProfileHeader.ColorSpaceSignature.elevenColor:
+                coordinateCount = 11
+            case ExtendedProfileHeader.ColorSpaceSignature.twelveColor:
+                coordinateCount = 12
+            case ExtendedProfileHeader.ColorSpaceSignature.thirteenColor:
+                coordinateCount = 13
+            case ExtendedProfileHeader.ColorSpaceSignature.fourteenColor:
+                coordinateCount = 14
+            case ExtendedProfileHeader.ColorSpaceSignature.fifteenColor:
+                coordinateCount = 15
+            case ExtendedProfileHeader.ColorSpaceSignature.none:
+                coordinateCount = 0
+            default:
                 throw ICCReadError.corrupted
-            case .known(let signature):
-                switch signature {
-                case .xyz:
-                    coordinateCount = 3
-                case .lab:
-                    coordinateCount = 3
-                case .cieluv:
-                    coordinateCount = 3
-                case .yCbCr:
-                    coordinateCount = 3
-                case .yxy:
-                    coordinateCount = 3
-                case .lms:
-                    coordinateCount = 3
-                case .rgb:
-                    coordinateCount = 3
-                case .gray:
-                    coordinateCount = 1
-                case .hsv:
-                    coordinateCount = 3
-                case .hls:
-                    coordinateCount = 3
-                case .cmyk:
-                    coordinateCount = 4
-                case .cmy:
-                    coordinateCount = 3
-                case .twoColor:
-                    coordinateCount = 2
-                case .threeColor:
-                    coordinateCount = 3
-                case .fourColor:
-                    coordinateCount = 4
-                case .fiveColor:
-                    coordinateCount = 5
-                case .sixColor:
-                    coordinateCount = 6
-                case .sevenColor:
-                    coordinateCount = 7
-                case .eightColor:
-                    coordinateCount = 8
-                case .nineColor:
-                    coordinateCount = 9
-                case .tenColor:
-                    coordinateCount = 10
-                case .elevenColor:
-                    coordinateCount = 11
-                case .twelveColor:
-                    coordinateCount = 12
-                case .thirteenColor:
-                    coordinateCount = 13
-                case .fourteenColor:
-                    coordinateCount = 14
-                case .fifteenColor:
-                    coordinateCount = 15
-                case .none:
-                    coordinateCount = 0
-                }
             }
             
             var pcsCoords: [UInt16] = []

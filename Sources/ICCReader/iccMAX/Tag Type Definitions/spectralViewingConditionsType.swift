@@ -51,7 +51,7 @@ import DataStream
 /// the CMM provides its own transform. If this tag is not present and the CMM does not provide an alternative, then the profile cannot
 /// be connected.
 public struct spectralViewingConditionsType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let colorimetricObserverType: StandardObserverEncoding
     public let range: spectralRange
@@ -73,8 +73,8 @@ public struct spectralViewingConditionsType {
         }
         
         /// 0 .. 3 4 ‘svcn’ (7376636eh ) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .spectralViewingConditionsType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.spectralViewingConditions else {
             throw ICCReadError.corrupted
         }
         

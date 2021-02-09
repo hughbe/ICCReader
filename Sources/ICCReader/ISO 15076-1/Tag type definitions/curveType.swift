@@ -11,7 +11,7 @@ import DataStream
 /// The curveType contains a 4-byte count value and a one-dimensional table of 2-byte values. When used the byte assignment shall be
 /// as given in Table 34.
 public struct curveType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let count: UInt32
     public let data: CurveData
@@ -32,8 +32,8 @@ public struct curveType {
         }
         
         /// 0 to 3 4 ‘curv’ (63757276h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .curveType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.curve else {
             throw ICCReadError.corrupted
         }
         

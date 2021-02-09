@@ -35,7 +35,7 @@ import DataStream
 /// performed.
 /// This tag type shall only be used when the PCS field in the header specifies either PCSXYZ or PCSLAB.
 public struct lutBToAType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let inputChan: UInt8
     public let outputChan: UInt8
@@ -59,8 +59,8 @@ public struct lutBToAType {
         }
         
         /// 0 to 3 4 ‘mBA’ (6D424120h) [multi-function BToA table] type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .lutBToAType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.lutBToA else {
             throw ICCReadError.corrupted
         }
         

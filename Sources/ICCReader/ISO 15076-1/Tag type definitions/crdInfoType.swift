@@ -17,7 +17,7 @@ import DataStream
 /// receding strings is not a multiple of four. Profile reading and writing software must be written carefully in order to handle these
 /// alignment problems.
 public struct crdInfoType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let productNameCount: uInt32Number
     public let productName: String
@@ -36,8 +36,8 @@ public struct crdInfoType {
         }
         
         /// 0..3 ‘crdi’ (63726469h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .crdInfoType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.crdInfo else {
             throw ICCReadError.corrupted
         }
         

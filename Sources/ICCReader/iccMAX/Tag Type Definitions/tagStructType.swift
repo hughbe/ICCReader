@@ -18,11 +18,11 @@ import DataStream
 /// Tag element signatures shall be unique within a tagStructType structure.
 /// The Offset of multiple elements can be the same (i.e. elements can share tag data).
 public struct tagStructType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
-    public let typeIdentifier: KnownSignature<StructSignature>
+    public let typeIdentifier: ICCSignature
     public let count: UInt32
-    public let elements: [Signature: TagFactory]
+    public let elements: [ICCSignature: ICCTagData]
     
     public init(dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
         let startPosition = dataStream.position
@@ -31,9 +31,9 @@ public struct tagStructType {
             throw ICCReadError.corrupted
         }
         
-        /// 0..3 4 ‘tstr’ (74737472h) tagStructType signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .tagStructType else {
+        /// 0..3 4 ‘tstr’ (74737472h) tagStructtype signature
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.tagStruct else {
             throw ICCReadError.corrupted
         }
         
@@ -41,7 +41,7 @@ public struct tagStructType {
         self.reserved = try dataStream.read(endianess: .bigEndian)
         
         /// 8..11 4 Struct type Identifier 4-byte signature
-        self.typeIdentifier = try KnownSignature(dataStream: &dataStream)
+        self.typeIdentifier = try ICCSignature(dataStream: &dataStream)
         
         /// 12..15 4 Number of tag elements N in structure uInt32Number
         let count: UInt32 = try dataStream.read(endianess: .bigEndian)
@@ -51,16 +51,16 @@ public struct tagStructType {
         
         self.count = count
         
-        /// 16..19 4 Tag element 1 signature 4-byte signature
+        /// 16..19 4 Tag element 1 Signature 4-byte signature
         /// 20..27 8 Tag element 1 position positionNumber
         /// … … … …
-        /// N*12+4..N*12+7 4 Tag element N signature 4-byte signature
+        /// N*12+4..N*12+7 4 Tag element N Signature 4-byte signature
         /// N*12+8..N*12+15 8 Tag element N position positionNumber
         /// N*12+16..end Tag element data
-        var elements: [Signature: TagFactory] = [:]
+        var elements: [ICCSignature: ICCTagData] = [:]
         elements.reserveCapacity(Int(self.count))
         for _ in 0..<self.count {
-            let signature = try Signature(dataStream: &dataStream)
+            let signature = try ICCSignature(dataStream: &dataStream)
             let position = try positionNumber(dataStream: &dataStream)
             
             let oldPosition = dataStream.position
@@ -72,7 +72,7 @@ public struct tagStructType {
             
             let dataStartPosition = startPosition + Int(position.offset)
             dataStream.position = dataStartPosition
-            elements[signature] = try TagFactory(dataStream: &dataStream, size: position.size, header: header)
+            elements[signature] = try ICCTagData(dataStream: &dataStream, size: position.size, header: header)
             
             guard dataStream.position - dataStartPosition == position.size else {
                 throw ICCReadError.corrupted

@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  textDescriptionType.swift
 //  
 //
 //  Created by Hugh Bellamy on 11/12/2020.
@@ -31,7 +31,7 @@ import DataStream
 /// count is not a multiple of four. The ScriptCode code is misaligned when the ASCII count is odd. Profile reading and writing software
 /// must be written carefully in order to handle these alignment problems.
 public struct textDescriptionType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let count: UInt32
     public let desc: String
@@ -53,8 +53,8 @@ public struct textDescriptionType {
         }
         
         /// 0..3 ‘desc’ (64657363h) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .textDescriptionType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.textDescription else {
             throw ICCReadError.corrupted
         }
         

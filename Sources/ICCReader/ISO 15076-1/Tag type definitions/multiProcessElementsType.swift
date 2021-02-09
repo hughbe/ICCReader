@@ -26,7 +26,7 @@ import DataStream
 /// bytes as needed.
 /// It is permitted to share data between processing elements. For example, the offsets for some processing elements can be identical.
 public struct multiProcessElementsType {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let numberOfInputChannels: UInt16
     public let numberOfOutputChannels: UInt16
@@ -41,8 +41,8 @@ public struct multiProcessElementsType {
         }
         
         /// 0 to 3 4 ‘mpet’ (6D706574h) [multi-process elements table] type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .multiProcessElementsType else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.multiProcessElements else {
             throw ICCReadError.corrupted
         }
         

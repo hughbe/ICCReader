@@ -31,7 +31,7 @@ import DataStream
 /// NOTE The parameters selected for a parametric curve can result in complex or undefined values for the input range used. This can
 /// occur for example if g ⇐ 0, a ⇐ 0 or d < −b/a In such cases, the behaviour of the curve is undefined.
 public struct namedColor2Type {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let vendorFlag: UInt32
     public let count: UInt32
@@ -48,8 +48,8 @@ public struct namedColor2Type {
         }
         
         /// 0 to 3 4 ‘ncl2’ (6E636C32h) type signature 
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .namedColor2Type else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.namedColor2 else {
             throw ICCReadError.corrupted
         }
         

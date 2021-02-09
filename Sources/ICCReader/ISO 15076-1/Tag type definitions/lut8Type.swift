@@ -66,7 +66,7 @@ import Foundation
 /// When using this type, it is necessary to assign each data colour space component to an input and output channel. These assignments
 /// shall be as shown in Table 38. The channels are numbered according to the order in which their table occurs.
 public struct lut8Type {
-    public let sig: TagTypeSignature
+    public let sig: ICCSignature
     public let reserved: uInt32Number
     public let inputChan: UInt8
     public let outputChan: UInt8
@@ -93,8 +93,8 @@ public struct lut8Type {
         }
         
         /// 0 to 3 4 ‘mft1’ (6D667431h) (multi-function table with 1−byte precision) type signature
-        self.sig = try TagTypeSignature(dataStream: &dataStream)
-        guard self.sig ==  .lut8Type else {
+        self.sig = try ICCSignature(dataStream: &dataStream)
+        guard self.sig ==  ICCTagTypeSignature.lut8 else {
             throw ICCReadError.corrupted
         }
         
