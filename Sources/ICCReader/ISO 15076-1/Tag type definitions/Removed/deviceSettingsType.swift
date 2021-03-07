@@ -180,8 +180,8 @@ public struct deviceSettingsType {
         
         public init(dataStream: inout DataStream, platformSignature: ICCSignature, idSignature: ICCSignature, size: UInt32) throws {
             switch platformSignature {
-            case ExtendedProfileHeader.PlatformSignature.microsoftCorporation,
-                 ExtendedProfileHeader.PlatformSignature.microsoftCorporation2:
+            case ICCColorProfilePlatformSignature.microsoftCorporation,
+                 ICCColorProfilePlatformSignature.microsoftCorporation2:
                 switch idSignature.rawValue {
                 case MSFTSettingSignature.resolution.rawValue:
                     guard size == 8 else {

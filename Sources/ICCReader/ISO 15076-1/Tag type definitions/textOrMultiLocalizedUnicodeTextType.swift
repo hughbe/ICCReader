@@ -12,7 +12,7 @@ public enum textOrMultiLocalizedUnicodeTextType {
     case text(_: String)
     case multiLocalizedUnicode(_: [multiLocalizedUnicodeType.LocalizedString])
     
-    public init(dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
+    public init(dataStream: inout DataStream, size: UInt32, header: ICCColorProfileHeader) throws {
         let startPosition = dataStream.position
         
         guard size >= 4 else {

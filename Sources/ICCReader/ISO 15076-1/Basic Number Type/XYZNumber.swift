@@ -13,19 +13,25 @@ import DataStream
 /// should be normalized such that it has the value 100,0 for the perfect diffusing reflector or transmitter, in this , for reasons of coding
 /// efficiency, Y is specified such that it has the value 1,0 for the perfect diffusing reflector or transmitter for nCIEXYZ.
 /// NOTE 1 Signed numbers are employed for this type to accommodate negative values arising during calculations.
-public struct XYZNumber {
-    public let x: s15Fixed16Number
-    public let y: s15Fixed16Number
-    public let z: s15Fixed16Number
+public struct XYZNumber: Hashable {
+    public let x: Float
+    public let y: Float
+    public let z: Float
+    
+    public init(x: Float, y: Float, z: Float) {
+        self.x = x
+        self.y = y
+        self.z = z
+    }
     
     public init(dataStream: inout DataStream) throws {
         /// 0 to 3 4 CIEXYZ X, nCIEXYZ X, or PCSXYZ X s15Fixed16Number
-        self.x = try s15Fixed16Number(dataStream: &dataStream)
+        self.x = try s15Fixed16Number(dataStream: &dataStream).value
         
         /// 4 to 7 4 CIEXYZ Y, nCIEXYZ Y, or PCSXYZ Y s15Fixed16Number
-        self.y = try s15Fixed16Number(dataStream: &dataStream)
+        self.y = try s15Fixed16Number(dataStream: &dataStream).value
         
         /// 8 to 11 4 CIEXYZ Z, nCIEXYZ Z, or PCSXYZ Z s15Fixed16Number
-        self.z = try s15Fixed16Number(dataStream: &dataStream)
+        self.z = try s15Fixed16Number(dataStream: &dataStream).value
     }
 }

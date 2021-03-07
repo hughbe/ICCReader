@@ -14,7 +14,7 @@ public enum spectralWhitePointType {
     case uInt16Array(_: [UInt16])
     case sparseMatrixArray(_: sparseMatrixArrayType)
     
-    public init(dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
+    public init(dataStream: inout DataStream, size: UInt32, header: ICCColorProfileHeader) throws {
         let startPosition = dataStream.position
         
         guard size >= 4 else {

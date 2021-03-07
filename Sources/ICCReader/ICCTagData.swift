@@ -68,7 +68,7 @@ public enum ICCTagData {
 
     case unknown(signature: ICCSignature, data: [UInt8])
     
-    public init(dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
+    public init(dataStream: inout DataStream, size: UInt32, header: ICCColorProfileHeader) throws {
         guard size >= 4 else {
             throw ICCReadError.corrupted
         }

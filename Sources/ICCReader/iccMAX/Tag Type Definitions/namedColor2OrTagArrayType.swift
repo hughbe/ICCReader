@@ -12,7 +12,7 @@ public enum namedColor2OrTagArrayType {
     case namedColor2(_: namedColor2Type)
     case tagArray(_: tagArrayType)
     
-    public init(dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
+    public init(dataStream: inout DataStream, size: UInt32, header: ICCColorProfileHeader) throws {
         let startPosition = dataStream.position
         
         guard size >= 4 else {

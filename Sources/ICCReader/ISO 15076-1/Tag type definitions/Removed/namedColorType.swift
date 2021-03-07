@@ -22,7 +22,7 @@ public struct namedColorType {
     public let suffix: String
     public let values: [NamedColor]
     
-    public init(dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
+    public init(dataStream: inout DataStream, size: UInt32, header: ICCColorProfileHeader) throws {
         let startPosition = dataStream.position
         
         guard size >= 16 else {
@@ -81,65 +81,65 @@ public struct namedColorType {
         public let rootName: String
         public let pcsCoords: [UInt16]
         
-        public init(dataStream: inout DataStream, header: ExtendedProfileHeader) throws {
+        public init(dataStream: inout DataStream, header: ICCColorProfileHeader) throws {
             /// u+1..v first color root name (maximum of 32 bytes) 7-bit ASCII, null terminated
             self.rootName = try dataStream.readAsciiString()!
             
             let coordinateCount: Int
             switch header.colorSpace {
-            case ExtendedProfileHeader.ColorSpaceSignature.xyz:
+            case ColorSpaceSignature.xyz:
                 coordinateCount = 3
-            case ExtendedProfileHeader.ColorSpaceSignature.lab:
+            case ColorSpaceSignature.lab:
                 coordinateCount = 3
-            case ExtendedProfileHeader.ColorSpaceSignature.cieluv:
+            case ColorSpaceSignature.cieluv:
                 coordinateCount = 3
-            case ExtendedProfileHeader.ColorSpaceSignature.yCbCr:
+            case ColorSpaceSignature.yCbCr:
                 coordinateCount = 3
-            case ExtendedProfileHeader.ColorSpaceSignature.yxy:
+            case ColorSpaceSignature.yxy:
                 coordinateCount = 3
-            case ExtendedProfileHeader.ColorSpaceSignature.lms:
+            case ColorSpaceSignature.lms:
                 coordinateCount = 3
-            case ExtendedProfileHeader.ColorSpaceSignature.rgb:
+            case ColorSpaceSignature.rgb:
                 coordinateCount = 3
-            case ExtendedProfileHeader.ColorSpaceSignature.gray:
+            case ColorSpaceSignature.gray:
                 coordinateCount = 1
-            case ExtendedProfileHeader.ColorSpaceSignature.hsv:
+            case ColorSpaceSignature.hsv:
                 coordinateCount = 3
-            case ExtendedProfileHeader.ColorSpaceSignature.hls:
+            case ColorSpaceSignature.hls:
                 coordinateCount = 3
-            case ExtendedProfileHeader.ColorSpaceSignature.cmyk:
+            case ColorSpaceSignature.cmyk:
                 coordinateCount = 4
-            case ExtendedProfileHeader.ColorSpaceSignature.cmy:
+            case ColorSpaceSignature.cmy:
                 coordinateCount = 3
-            case ExtendedProfileHeader.ColorSpaceSignature.twoColor:
+            case ColorSpaceSignature.twoColor:
                 coordinateCount = 2
-            case ExtendedProfileHeader.ColorSpaceSignature.threeColor:
+            case ColorSpaceSignature.threeColor:
                 coordinateCount = 3
-            case ExtendedProfileHeader.ColorSpaceSignature.fourColor:
+            case ColorSpaceSignature.fourColor:
                 coordinateCount = 4
-            case ExtendedProfileHeader.ColorSpaceSignature.fiveColor:
+            case ColorSpaceSignature.fiveColor:
                 coordinateCount = 5
-            case ExtendedProfileHeader.ColorSpaceSignature.sixColor:
+            case ColorSpaceSignature.sixColor:
                 coordinateCount = 6
-            case ExtendedProfileHeader.ColorSpaceSignature.sevenColor:
+            case ColorSpaceSignature.sevenColor:
                 coordinateCount = 7
-            case ExtendedProfileHeader.ColorSpaceSignature.eightColor:
+            case ColorSpaceSignature.eightColor:
                 coordinateCount = 8
-            case ExtendedProfileHeader.ColorSpaceSignature.nineColor:
+            case ColorSpaceSignature.nineColor:
                 coordinateCount = 9
-            case ExtendedProfileHeader.ColorSpaceSignature.tenColor:
+            case ColorSpaceSignature.tenColor:
                 coordinateCount = 10
-            case ExtendedProfileHeader.ColorSpaceSignature.elevenColor:
+            case ColorSpaceSignature.elevenColor:
                 coordinateCount = 11
-            case ExtendedProfileHeader.ColorSpaceSignature.twelveColor:
+            case ColorSpaceSignature.twelveColor:
                 coordinateCount = 12
-            case ExtendedProfileHeader.ColorSpaceSignature.thirteenColor:
+            case ColorSpaceSignature.thirteenColor:
                 coordinateCount = 13
-            case ExtendedProfileHeader.ColorSpaceSignature.fourteenColor:
+            case ColorSpaceSignature.fourteenColor:
                 coordinateCount = 14
-            case ExtendedProfileHeader.ColorSpaceSignature.fifteenColor:
+            case ColorSpaceSignature.fifteenColor:
                 coordinateCount = 15
-            case ExtendedProfileHeader.ColorSpaceSignature.none:
+            case ColorSpaceSignature.none:
                 coordinateCount = 0
             default:
                 throw ICCReadError.corrupted

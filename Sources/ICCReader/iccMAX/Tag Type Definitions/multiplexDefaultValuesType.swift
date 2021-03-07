@@ -14,7 +14,7 @@ public enum multiplexDefaultValuesType {
     case float16Array(_: [UInt16])
     case float32Array(_: [Float])
     
-    public init(dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
+    public init(dataStream: inout DataStream, size: UInt32, header: ICCColorProfileHeader) throws {
         let startPosition = dataStream.position
         
         guard size >= 4 else {

@@ -28,7 +28,7 @@ import Foundation
 /// NOTE 2 The above restrictions result in two key benefits. First, the likelihood of two profiles which contain the same tag data, yet
 /// have different checksum values, is reduced. Second, all profiles are reduced to a minimum size.
 public struct ICCColorProfile {
-    public let header: ExtendedProfileHeader
+    public let header: ICCColorProfileHeader
     public let tags: [ICCTag]
     private let tagsDictionary: [String: ICCTag]
     
@@ -41,7 +41,7 @@ public struct ICCColorProfile {
         let startPosition = dataStream.position
         
         /// a) a 128-byte profile header as defined in 7.2;
-        self.header = try ExtendedProfileHeader(dataStream: &dataStream)
+        self.header = try ICCColorProfileHeader(dataStream: &dataStream)
 
         /// b) a profile tag table as defined in 7.3;
         let iccTagTable = try ICCTagTable(dataStream: &dataStream)

@@ -13,7 +13,7 @@ public enum utf8OrUtf8ZipType {
     case utf8Zip(_: [UInt8])
     case zxml(_: [UInt8])
     
-    public init(dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
+    public init(dataStream: inout DataStream, size: UInt32, header: ICCColorProfileHeader) throws {
         let startPosition = dataStream.position
         
         guard size >= 4 else {

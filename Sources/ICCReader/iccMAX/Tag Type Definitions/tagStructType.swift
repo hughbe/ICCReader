@@ -24,7 +24,7 @@ public struct tagStructType {
     public let count: UInt32
     public let elements: [ICCSignature: ICCTagData]
     
-    public init(dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
+    public init(dataStream: inout DataStream, size: UInt32, header: ICCColorProfileHeader) throws {
         let startPosition = dataStream.position
 
         guard size >= 20 else {

@@ -12,7 +12,7 @@ public struct ICCTag {
     public let type: ICCSignature
     public let data: ICCTagData
     
-    public init(signature: ICCSignature, dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
+    public init(signature: ICCSignature, dataStream: inout DataStream, size: UInt32, header: ICCColorProfileHeader) throws {
         guard size >= 8 else {
             throw ICCReadError.corrupted
         }

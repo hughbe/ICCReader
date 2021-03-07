@@ -12,7 +12,7 @@ public enum embeddedNormalImageOrEmbeddedHeightImageType {
     case embeddedNormalImage(_: embeddedNormalImageType)
     case embeddedHeightImage(_: embeddedHeightImageType)
     
-    public init(dataStream: inout DataStream, size: UInt32, header: ExtendedProfileHeader) throws {
+    public init(dataStream: inout DataStream, size: UInt32, header: ICCColorProfileHeader) throws {
         let startPosition = dataStream.position
         
         guard size >= 4 else {
