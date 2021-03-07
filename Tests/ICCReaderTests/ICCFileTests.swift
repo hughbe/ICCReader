@@ -39,6 +39,14 @@ final class MetafileTests: XCTestCase {
             XCTAssertEqual(0, file.header.version.bugFixVersion)
             XCTAssertEqual(0, file.header.version.subClassMajorVersion)
             XCTAssertEqual(0, file.header.version.subClassMinorVersion)
+            
+            let description = file.profileDescription!
+            guard case let .textDescription(desc) = description else {
+                XCTAssertTrue(false)
+                return
+            }
+            
+            XCTAssertEqual("Adobe RGB (1998)", desc.desc)
         }
     }
     
