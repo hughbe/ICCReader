@@ -99,34 +99,76 @@ public struct measurementType {
         case zeroDOrD0 = 0x00000002
     }
     
-    /// 32 to 35 4 Encoded value for standard illuminant see Table 50
-    /// The encoding for the standard illuminant field is shown in Table 50.
+    /// 32 to 35 4 Encoded value for standard illuminant see Table 60
+    /// The encoding for the standard illuminant field is shown in Table 60.
     public enum Illuminant: UInt32 {
-        /// Unknown 00000000h
-        case unknown = 0x00000000
-        
+        /// Custom 00000000h
+        case custom = 0x00000000
+
         /// D50 00000001h
         case d50 = 0x00000001
-        
+
         /// D65 00000002h
         case d65 = 0x00000002
-        
+
         /// D93 00000003h
         case d93 = 0x00000003
-        
+
         /// F2 00000004h
         case f2 = 0x00000004
-        
+
         /// D55 00000005h
         case d55 = 0x0000005
-        
+
         /// A 00000006h
         case a = 0x00000006
-        
+
         /// Equi-Power (E) 00000007h
         case equiPowerE = 0x00000007
-        
+
         /// F8 00000008h
         case f8 = 0x00000008
+
+        /// Black body defined by CCT 00000009h
+        case blackBodyCCT = 0x00000009
+
+        /// Daylight defined by CCT 0000000Ah
+        case dayLightCCT = 0x0000000A
+
+        /// B 0000000Bh
+        case b = 0x0000000B
+
+        /// C 0000000Ch
+        case c = 0x0000000C
+
+        /// F1 0000000Dh
+        case f1 = 0x0000000D
+
+        /// F3 0000000Eh
+        case f3 = 0x0000000E
+
+        /// F4 0000000Fh
+        case f4 = 0x0000000F
+
+        /// F5 00000010h
+        case f5 = 0x00000010
+
+        /// F6 00000011h
+        case f6 = 0x00000011
+
+        /// F7 00000012h
+        case f7 = 0x00000012
+
+        /// F9 00000013h
+        case f9 = 0x00000013
+
+        /// F10 00000014h
+        case f10 = 0x00000014
+
+        /// F11 00000015h
+        case f11 = 0x00000015
+
+        /// F12 00000016h
+        case f12 = 0x00000016
     }
 }
